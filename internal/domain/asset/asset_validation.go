@@ -5,6 +5,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 )
 
+//go:generate mockery --name AssetValidator
 type AssetValidator interface {
 	validateBalanceAndLimitForTransaction(a *Asset, trx *Transaction) error
 	validateAssetForCreateAndUpdate(a *Asset) error

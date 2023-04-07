@@ -12,7 +12,7 @@ type Currency string
 type AssetType uint8
 
 var (
-	validator = assetValidator{}
+	validator AssetValidator = &assetValidator{}
 )
 
 const (
@@ -49,11 +49,11 @@ type Transaction struct {
 	Volume    float64
 }
 
-func CreateNewAsset(opts ...*func(a *Asset) error) (*Asset, error) {
+func CreateNewAsset(opts ...func(a *Asset) error) (*Asset, error) {
 	newAsset := Asset{}
 	newAsset.Id = NewID()
 	for _, opt := range opts {
-		err := (*opt)(&newAsset)
+		err := opt(&newAsset)
 		if err != nil {
 			return nil, err
 		}
