@@ -50,7 +50,10 @@ func (a assetRW) FindByOwnerId(ownerId domain.Id) ([]*domainasset.Asset, error) 
 	var mappedDomainAssets []*domainasset.Asset
 	for _, asset := range foundAsset {
 		domainAsset := memoryAssetToDomain(asset)
-		a.fillTransactions(domainAsset)
+		err := a.fillTransactions(domainAsset)
+		if err != nil {
+			return nil, err
+		}
 		domainAsset.Owner = user
 		mappedDomainAssets = append(mappedDomainAssets, domainAsset)
 	}
@@ -60,7 +63,10 @@ func (a assetRW) FindByOwnerId(ownerId domain.Id) ([]*domainasset.Asset, error) 
 func (a assetRW) Save(asset domainasset.Asset) error {
 	memoryAsset := domainAssetToMemory(&asset)
 	a.store.Swap(asset.Id, memoryAsset)
-	(*a.transactionRw).SaveTransactionsByAsset(asset.Id, asset.Transactions)
+	err := (*a.transactionRw).SaveTransactionsByAsset(asset.Id, asset.Transactions)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

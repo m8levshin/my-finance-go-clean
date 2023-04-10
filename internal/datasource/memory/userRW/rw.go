@@ -19,7 +19,7 @@ func NewMemoryUserRW() rw.UserRW {
 }
 
 func (rw userRW) FindAll() ([]*domainuser.User, error) {
-	var toReturn []*domainuser.User
+	toReturn := []*domainuser.User{}
 	rw.store.Range(func(key, value any) bool {
 		user, ok := value.(domainuser.User)
 		if ok {
