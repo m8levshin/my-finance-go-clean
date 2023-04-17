@@ -1,4 +1,4 @@
-package domainasset
+package asset
 
 import (
 	"errors"

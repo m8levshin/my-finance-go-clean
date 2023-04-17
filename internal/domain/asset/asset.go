@@ -1,10 +1,11 @@
-package domainasset
+package asset
 
 import (
 	"errors"
+	"time"
+
 	. "github.com/mlevshin/my-finance-go-clean/internal/domain"
 	domainuser "github.com/mlevshin/my-finance-go-clean/internal/domain/user"
-	"time"
 )
 
 type Currency string
@@ -74,6 +75,7 @@ func UpdateAsset(initial *Asset, opts ...*func(u *Asset) error) (*Asset, error) 
 			return nil, err
 		}
 	}
+
 	if err := validator.validateAssetForCreateAndUpdate(initial); err != nil {
 		return nil, err
 	}

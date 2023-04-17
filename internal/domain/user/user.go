@@ -1,4 +1,4 @@
-package domainuser
+package user
 
 import (
 	"github.com/google/uuid"
@@ -24,21 +24,21 @@ const (
 	Password
 )
 
-func CreateUser(opts ...*func(u *User) error) (*User, error) {
+func CreateUser(opts ...func(u *User) error) (*User, error) {
 	newUser := User{
-		Id: domain.Id(uuid.New()),
+		Name: "Maxim",
+		Id:   domain.Id(uuid.New()),
 	}
-
 	for _, f := range opts {
-		err := (*f)(&newUser)
+		err := f(&newUser)
 		if err != nil {
 			return nil, err
 		}
 	}
-
 	err := validator.validateForCreateAndUpdate(&newUser)
 	if err != nil {
 		return nil, err
+
 	}
 
 	return &newUser, nil

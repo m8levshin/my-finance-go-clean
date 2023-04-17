@@ -1,11 +1,12 @@
-package assetRW
+package memory_rw
 
 import (
+	"sync"
+
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
 	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
 	"github.com/mlevshin/my-finance-go-clean/internal/uc/rw"
-	"sync"
 )
 
 type assetRW struct {
@@ -38,7 +39,7 @@ func (a assetRW) FindByOwnerId(ownerId domain.Id) ([]*domainasset.Asset, error) 
 		return nil, err
 	}
 
-	var foundAsset []*memoryAsset
+	foundAsset := make([]*memoryAsset, 0)
 	a.store.Range(func(key, value any) bool {
 		memoryAsset := value.(memoryAsset)
 		if memoryAsset.Owner == ownerUUID {
@@ -47,7 +48,7 @@ func (a assetRW) FindByOwnerId(ownerId domain.Id) ([]*domainasset.Asset, error) 
 		return true
 	})
 
-	var mappedDomainAssets []*domainasset.Asset
+	mappedDomainAssets := make([]*domainasset.Asset, 0)
 	for _, asset := range foundAsset {
 		domainAsset := memoryAssetToDomain(asset)
 		err := a.fillTransactions(domainAsset)

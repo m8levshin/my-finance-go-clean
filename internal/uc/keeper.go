@@ -5,13 +5,18 @@ import (
 )
 
 type keeper struct {
-	userRw rw.UserRW
+	userRw  rw.UserRW
+	assetRw rw.AssetRW
 }
 
 type HandlerBuilder struct {
-	UserRw rw.UserRW
+	UserRw  rw.UserRW
+	AssetRw rw.AssetRW
 }
 
 func (b HandlerBuilder) Build() Handler {
-	return &keeper{userRw: b.UserRw}
+	return &keeper{
+		userRw:  b.UserRw,
+		assetRw: b.AssetRw,
+	}
 }

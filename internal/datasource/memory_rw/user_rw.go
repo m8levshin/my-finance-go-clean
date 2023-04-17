@@ -1,4 +1,4 @@
-package userRW
+package memory_rw
 
 import (
 	"errors"
@@ -40,10 +40,6 @@ func (rw userRW) FindById(id domain.Id) (*domainuser.User, error) {
 }
 
 func (rw userRW) Save(user domainuser.User) error {
-	value, _ := rw.store.Load(user.Id)
-	if value == nil {
-		return errors.New("user not found")
-	}
 	rw.store.Store(user.Id, user)
 	return nil
 }

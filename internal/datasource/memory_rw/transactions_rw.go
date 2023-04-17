@@ -1,4 +1,4 @@
-package transactionRW
+package memory_rw
 
 import (
 	"github.com/google/uuid"

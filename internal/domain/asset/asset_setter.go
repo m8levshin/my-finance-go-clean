@@ -1,4 +1,4 @@
-package domainasset
+package asset
 
 import domainuser "github.com/mlevshin/my-finance-go-clean/internal/domain/user"
 

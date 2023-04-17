@@ -1,4 +1,4 @@
-package domainuser
+package user
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation"
@@ -22,5 +22,5 @@ func (v *userValidator) validateForCreateAndUpdate(u *User) error {
 }
 
 func (v *userValidator) checkRawPassword(pwd string) error {
-	return validation.Validate(pwd, validation.Length(5, 100))
+	return validation.Validate(pwd, validation.Length(10, 100))
 }

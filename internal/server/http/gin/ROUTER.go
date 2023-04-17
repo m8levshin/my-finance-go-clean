@@ -12,21 +12,37 @@ type RouterHandler struct {
 	mutualMiddlewares []gin.HandlerFunc
 }
 
-func NewRouter(ucHandler uc.Handler, logger domain.Logger) RouterHandler {
-	return RouterHandler{
+func NewRouter(ucHandler uc.Handler, logger domain.Logger) *RouterHandler {
+	return &RouterHandler{
 		ucHandler:         ucHandler,
 		logger:            logger,
-		mutualMiddlewares: []gin.HandlerFunc{},
+		mutualMiddlewares: []gin.HandlerFunc{createErrorHandlerMiddleware()},
 	}
 }
 
-func (rH RouterHandler) SetRoutes(r *gin.Engine) {
+func (rH *RouterHandler) SetRoutes(r *gin.Engine) *gin.Engine {
 	api := r.Group("/api")
 	api.Use(rH.mutualMiddlewares...)
 	rH.usersRoutes(api)
+
+	return r
 }
 
-func (rH RouterHandler) usersRoutes(api *gin.RouterGroup) {
+func (rH *RouterHandler) usersRoutes(api *gin.RouterGroup) {
 	usersApi := api.Group("/users")
 	usersApi.GET("", rH.getAllUsers)
+	usersApi.GET("/:uuid", rH.getUserById)
+	usersApi.POST("", rH.createUser)
+	usersApi.GET("/:uuid/assets", rH.getAssetsByUser)
+}
+
+func createErrorHandlerMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next()
+
+		if len(c.Errors) > 0 {
+			c.JSON(500, gin.H{"error": c.Errors.Last().Error()})
+		}
+
+	}
 }
