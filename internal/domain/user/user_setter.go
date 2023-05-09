@@ -1,6 +1,15 @@
 package user
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"github.com/mlevshin/my-finance-go-clean/internal/domain"
+	"golang.org/x/crypto/bcrypt"
+)
+
+const (
+	NameField domain.UpdatableProperty = iota
+	EmailField
+	PasswordField
+)
 
 func SetName(name *string) func(u *User) error {
 	return func(u *User) error {

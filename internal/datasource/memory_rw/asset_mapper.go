@@ -10,7 +10,7 @@ import (
 func memoryAssetToDomain(asset *memoryAsset) *domainasset.Asset {
 	return &domainasset.Asset{
 		Id:   domain.Id(asset.Id),
-		Type: domainasset.AssetType(asset.Type),
+		Type: domainasset.Type(asset.Type),
 		Name: asset.Name,
 		Owner: &domainuser.User{
 			Id: domain.Id(asset.Id),

@@ -24,7 +24,7 @@ func (rH *RouterHandler) SetRoutes(r *gin.Engine) *gin.Engine {
 	api := r.Group("/api")
 	api.Use(rH.mutualMiddlewares...)
 	rH.usersRoutes(api)
-
+	rH.assetsRoutes(api)
 	return r
 }
 
@@ -34,6 +34,12 @@ func (rH *RouterHandler) usersRoutes(api *gin.RouterGroup) {
 	usersApi.GET("/:uuid", rH.getUserById)
 	usersApi.POST("", rH.createUser)
 	usersApi.GET("/:uuid/assets", rH.getAssetsByUser)
+	usersApi.POST("/:uuid/assets", rH.postAssetForUser)
+}
+
+func (rH *RouterHandler) assetsRoutes(api *gin.RouterGroup) {
+	assetsApi := api.Group("/assets")
+	assetsApi.GET("/:uuid", rH.getTransactionsByAssetId)
 }
 
 func createErrorHandlerMiddleware() gin.HandlerFunc {

@@ -1,7 +1,6 @@
 package user
 
 import (
-	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
 )
 
@@ -12,22 +11,13 @@ type User struct {
 	PasswordHash []byte
 }
 
-type UserUpdatableProperty uint8
-
 var (
 	validator = userValidator{}
 )
 
-const (
-	Name UserUpdatableProperty = iota
-	Email
-	Password
-)
-
 func CreateUser(opts ...func(u *User) error) (*User, error) {
 	newUser := User{
-		Name: "Maxim",
-		Id:   domain.Id(uuid.New()),
+		Id: domain.NewID(),
 	}
 	for _, f := range opts {
 		err := f(&newUser)

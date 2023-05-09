@@ -2,6 +2,7 @@ package dto
 
 import (
 	"github.com/google/uuid"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain"
 	domainuser "github.com/mlevshin/my-finance-go-clean/internal/domain/user"
 )
 
@@ -11,12 +12,14 @@ type CreateUserRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
-func (r *CreateUserRequest) MapToUpdatableFields() *map[domainuser.UserUpdatableProperty]*string {
-	return &map[domainuser.UserUpdatableProperty]*string{
-		domainuser.Name:     &r.Name,
-		domainuser.Email:    &r.Email,
-		domainuser.Password: &r.Password,
-	}
+func (r *CreateUserRequest) MapToUpdatableFields() map[domain.UpdatableProperty]any {
+
+	createUserFields := map[domain.UpdatableProperty]any{}
+	createUserFields[domainuser.NameField] = &(r.Name)
+	createUserFields[domainuser.EmailField] = &(r.Email)
+	createUserFields[domainuser.PasswordField] = &(r.Password)
+
+	return createUserFields
 }
 
 type UserDto struct {

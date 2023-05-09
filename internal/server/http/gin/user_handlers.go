@@ -51,7 +51,7 @@ func (rH *RouterHandler) createUser(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	user, err := rH.ucHandler.CreateNewUser(*body.MapToUpdatableFields())
+	user, err := rH.ucHandler.CreateNewUser(body.MapToUpdatableFields())
 	if user != nil && err == nil {
 		c.JSON(http.StatusCreated, dto.MapUserDomainToDto(user))
 		return

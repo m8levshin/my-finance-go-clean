@@ -5,7 +5,7 @@ import (
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
-type UserValidator interface {
+type Validator interface {
 	validateForCreateAndUpdate(u *User) error
 	checkRawPassword(pwd string) error
 }

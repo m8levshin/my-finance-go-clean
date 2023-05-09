@@ -6,7 +6,7 @@ import (
 )
 
 //go:generate mockery --name AssetValidator
-type AssetValidator interface {
+type Validator interface {
 	validateBalanceAndLimitForTransaction(a *Asset, trx *Transaction) error
 	validateAssetForCreateAndUpdate(a *Asset) error
 }

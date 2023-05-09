@@ -7,5 +7,6 @@ import (
 
 type AssetRW interface {
 	FindByOwnerId(ownerId domain.Id) ([]*domainasset.Asset, error)
+	FindById(assetId domain.Id) (*domainasset.Asset, error)
 	Save(asset domainasset.Asset) error
 }

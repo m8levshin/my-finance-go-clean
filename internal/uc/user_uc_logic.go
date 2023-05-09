@@ -15,12 +15,16 @@ func (k *keeper) GetUserById(uuid uuid.UUID) (user *domainuser.User, err error) 
 }
 
 func (k *keeper) CreateNewUser(
-	newUserFields map[domainuser.UserUpdatableProperty]*string,
+	newUserFields map[domain.UpdatableProperty]any,
 ) (user *domainuser.User, err error) {
+	var name = (newUserFields[domainuser.NameField]).(*string)
+	var email = (newUserFields[domainuser.EmailField]).(*string)
+	var password = (newUserFields[domainuser.PasswordField]).(*string)
+
 	createdUser, err := domainuser.CreateUser(
-		domainuser.SetName(newUserFields[domainuser.Name]),
-		domainuser.SetEmail(newUserFields[domainuser.Email]),
-		domainuser.SetPassword(newUserFields[domainuser.Password]),
+		domainuser.SetName(name),
+		domainuser.SetEmail(email),
+		domainuser.SetPassword(password),
 	)
 	if err != nil {
 		return nil, err
