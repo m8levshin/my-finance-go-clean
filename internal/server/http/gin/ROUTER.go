@@ -38,7 +38,8 @@ func (rH *RouterHandler) usersRoutes(api *gin.RouterGroup) {
 
 func (rH *RouterHandler) assetsRoutes(api *gin.RouterGroup) {
 	assetsApi := api.Group("/assets")
-	assetsApi.GET("/:uuid", rH.getTransactionsByAssetId)
+	assetsApi.GET("/:uuid", rH.getAssetById)
+	assetsApi.GET("/:uuid/transactions", rH.getTransactionsByAssetId)
 	assetsApi.POST("", rH.postAsset)
 }
 

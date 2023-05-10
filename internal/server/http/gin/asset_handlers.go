@@ -30,22 +30,6 @@ func (rH *RouterHandler) getAssetsByUser(c *gin.Context) {
 	c.JSON(http.StatusOK, assetDtos)
 }
 
-func (rH *RouterHandler) getTransactionsByAssetId(c *gin.Context) {
-	assetUUIDParam := c.Param("uuid")
-	assetUUID, err := uuid.Parse(assetUUIDParam)
-	if err != nil {
-		c.Error(err)
-		return
-	}
-	transactions, err := rH.ucHandler.GetTransactionsByAssetId(assetUUID)
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
-	c.JSON(http.StatusOK, transactions)
-}
-
 func (rH *RouterHandler) postAsset(c *gin.Context) {
 	body := dto.CreateAssetRequest{}
 	if err := c.BindJSON(&body); err != nil {
