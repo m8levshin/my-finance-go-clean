@@ -7,7 +7,7 @@ import (
 const (
 	NameField domain.UpdatableProperty = iota
 	TypeField
-	OwnerField
+	UserIdField
 	LimitField
 	CurrencyField
 )
@@ -26,9 +26,9 @@ func SetType(t Type) func(a *Asset) error {
 	}
 }
 
-func SetOwner(u domain.Id) func(a *Asset) error {
+func SetUserId(u domain.Id) func(a *Asset) error {
 	return func(a *Asset) error {
-		a.OwnerId = u
+		a.UserId = u
 		return nil
 	}
 }

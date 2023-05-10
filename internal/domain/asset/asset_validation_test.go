@@ -13,7 +13,7 @@ import (
 var (
 	TestAssetName          = "TestName"
 	TestCurrency  Currency = "USD"
-	TestOwner              = domainuser.User{Id: domain.NewID()}
+	TestUser               = domainuser.User{Id: domain.NewID()}
 )
 
 func TestCreateNewAsset(t *testing.T) {
@@ -28,12 +28,12 @@ func TestCreateNewAsset(t *testing.T) {
 		asset, err := CreateNewAsset(
 			SetName(TestAssetName),
 			SetCurrency(TestCurrency),
-			SetOwner(&TestOwner),
+			SetUserId(TestUser.Id),
 		)
 		assert.Nil(t, err)
 		assert.Equal(t, TestAssetName, asset.Name)
 		assert.Equal(t, TestCurrency, asset.Currency)
-		assert.Equal(t, TestOwner.Id, asset.Owner.Id)
+		assert.Equal(t, TestUser.Id, asset.UserId)
 	})
 
 	t.Run("validation error", func(t *testing.T) {
@@ -47,7 +47,7 @@ func TestCreateNewAsset(t *testing.T) {
 		asset, err := CreateNewAsset(
 			SetName(TestAssetName),
 			SetCurrency(TestCurrency),
-			SetOwner(&TestOwner),
+			SetUserId(&TestUser),
 		)
 		assert.Error(t, err, "validation error")
 		assert.Nil(t, asset)

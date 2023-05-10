@@ -19,7 +19,7 @@ type memoryAsset struct {
 	Id       uuid.UUID
 	Type     int
 	Name     string
-	OwnerId  uuid.UUID
+	UserId   uuid.UUID
 	Currency string
 	Balance  float64
 	Limit    float64
@@ -39,9 +39,9 @@ func (a assetRW) FindById(assetId domain.Id) (*domainasset.Asset, error) {
 	return domainAsset, nil
 }
 
-func (a assetRW) FindByOwnerId(ownerId domain.Id) ([]*domainasset.Asset, error) {
-	ownerUUID := uuid.UUID(ownerId)
-	user, err := (*a.userRw).FindById(ownerId)
+func (a assetRW) FindByUserId(userId domain.Id) ([]*domainasset.Asset, error) {
+	userUUID := uuid.UUID(userId)
+	user, err := (*a.userRw).FindById(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (a assetRW) FindByOwnerId(ownerId domain.Id) ([]*domainasset.Asset, error) 
 	foundAsset := make([]*memoryAsset, 0)
 	a.store.Range(func(key, value any) bool {
 		memoryAsset := value.(memoryAsset)
-		if memoryAsset.OwnerId == ownerUUID {
+		if memoryAsset.UserId == userUUID {
 			foundAsset = append(foundAsset, &memoryAsset)
 		}
 		return true
@@ -58,7 +58,7 @@ func (a assetRW) FindByOwnerId(ownerId domain.Id) ([]*domainasset.Asset, error) 
 	mappedDomainAssets := make([]*domainasset.Asset, 0)
 	for _, asset := range foundAsset {
 		domainAsset := memoryAssetToDomain(asset)
-		domainAsset.OwnerId = user.Id
+		domainAsset.UserId = user.Id
 		mappedDomainAssets = append(mappedDomainAssets, domainAsset)
 	}
 	return mappedDomainAssets, nil

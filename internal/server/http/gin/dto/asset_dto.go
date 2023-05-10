@@ -10,7 +10,7 @@ type CreateAssetRequest struct {
 	Name     string     `json:"name" binding:"required"`
 	Type     string     `json:"type" binding:"required"`
 	Limit    float64    `json:"limit" binding:"required"`
-	OwnerId  *uuid.UUID `json:"ownerId" binding:"required"`
+	UserId   *uuid.UUID `json:"userId" binding:"required"`
 	Currency string     `json:"currency" binding:"required"`
 }
 
@@ -19,7 +19,7 @@ func (r *CreateAssetRequest) MapToUpdatableFields() map[domain.UpdatableProperty
 	createUserFields[domainasset.NameField] = &(r.Name)
 	createUserFields[domainasset.TypeField] = &(r.Type)
 	createUserFields[domainasset.LimitField] = &(r.Limit)
-	createUserFields[domainasset.OwnerField] = &(r.OwnerId)
+	createUserFields[domainasset.UserIdField] = &(r.UserId)
 	createUserFields[domainasset.CurrencyField] = &(r.Currency)
 
 	return createUserFields
@@ -30,19 +30,19 @@ type AssetDto struct {
 	Name     string     `json:"name"`
 	Type     string     `json:"type"`
 	Limit    float64    `json:"limit"`
-	OwnerId  *uuid.UUID `json:"ownerId"`
+	UserId   *uuid.UUID `json:"userId"`
 	Currency string     `json:"currency"`
 	Balance  float64    `json:"balance"`
 }
 
 func MapAssetDomainToDto(r *domainasset.Asset) *AssetDto {
-	ownerId := uuid.UUID(r.OwnerId)
+	userId := uuid.UUID(r.UserId)
 	return &AssetDto{
 		Id:       uuid.UUID(r.Id),
 		Name:     r.Name,
 		Type:     domainasset.TypeNames[r.Type],
 		Limit:    r.Limit,
-		OwnerId:  &ownerId,
+		UserId:   &userId,
 		Currency: string(r.Currency),
 		Balance:  r.Balance,
 	}

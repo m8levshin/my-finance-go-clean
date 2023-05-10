@@ -37,7 +37,7 @@ func (rH *RouterHandler) postAsset(c *gin.Context) {
 		return
 	}
 
-	asset, err := rH.ucHandler.CreateNewAsset(body.OwnerId, body.MapToUpdatableFields())
+	asset, err := rH.ucHandler.CreateNewAsset(body.UserId, body.MapToUpdatableFields())
 	if asset != nil && err == nil {
 		c.JSON(http.StatusCreated, dto.MapAssetDomainToDto(asset))
 		return

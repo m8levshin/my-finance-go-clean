@@ -37,7 +37,7 @@ type Asset struct {
 	Id       domain.Id
 	Type     Type
 	Name     string
-	OwnerId  domain.Id
+	UserId   domain.Id
 	Currency Currency
 	Balance  float64
 	Limit    float64
