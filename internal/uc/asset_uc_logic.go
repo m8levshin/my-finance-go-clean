@@ -28,10 +28,7 @@ func (k *keeper) GetTransactionsByAssetId(assetId uuid.UUID) ([]*domainasset.Tra
 	return transactions, nil
 }
 
-func (k *keeper) CreateNewAsset(
-	ownerId *uuid.UUID,
-	newAssetFields map[domain.UpdatableProperty]any,
-) (*domainasset.Asset, error) {
+func (k *keeper) CreateNewAsset(ownerId *uuid.UUID, newAssetFields map[domain.UpdatableProperty]any) (*domainasset.Asset, error) {
 
 	ownerDomainId := domain.Id(*ownerId)
 	owner, err := k.userRw.FindById(ownerDomainId)
@@ -64,4 +61,12 @@ func (k *keeper) CreateNewAsset(
 		return nil, err
 	}
 	return newAsset, err
+}
+
+func (k *keeper) GetAssetById(assetId uuid.UUID) (*domainasset.Asset, error) {
+	asset, err := k.assetRw.FindById(domain.Id(assetId))
+	if err != nil {
+		return nil, err
+	}
+	return asset, nil
 }

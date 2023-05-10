@@ -47,3 +47,21 @@ func (rH *RouterHandler) postAsset(c *gin.Context) {
 		c.Error(err)
 	}
 }
+
+func (rH *RouterHandler) getAssetById(c *gin.Context) {
+	assetIdParam := c.Param("uuid")
+	assetId, err := uuid.Parse(assetIdParam)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	asset, err := rH.ucHandler.GetAssetById(assetId)
+	if err != nil {
+		c.Status(500)
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.MapAssetDomainToDto(asset))
+}

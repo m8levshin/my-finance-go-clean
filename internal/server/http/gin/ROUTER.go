@@ -16,7 +16,7 @@ func NewRouter(ucHandler uc.Handler, logger domain.Logger) *RouterHandler {
 	return &RouterHandler{
 		ucHandler:         ucHandler,
 		logger:            logger,
-		mutualMiddlewares: []gin.HandlerFunc{createErrorHandlerMiddleware()},
+		mutualMiddlewares: []gin.HandlerFunc{},
 	}
 }
 
@@ -41,15 +41,4 @@ func (rH *RouterHandler) assetsRoutes(api *gin.RouterGroup) {
 	assetsApi.GET("/:uuid", rH.getAssetById)
 	assetsApi.GET("/:uuid/transactions", rH.getTransactionsByAssetId)
 	assetsApi.POST("", rH.postAsset)
-}
-
-func createErrorHandlerMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Next()
-
-		if len(c.Errors) > 0 {
-			c.JSON(500, gin.H{"error": c.Errors.Last().Error()})
-		}
-
-	}
 }
