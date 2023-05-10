@@ -44,26 +44,16 @@ func (rH *RouterHandler) getTransactionsByAssetId(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, transactions)
-
 }
 
-func (rH *RouterHandler) postAssetForUser(c *gin.Context) {
-	userUUIDParam := c.Param("uuid")
-	userUUID, err := uuid.Parse(userUUIDParam)
-
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
+func (rH *RouterHandler) postAsset(c *gin.Context) {
 	body := dto.CreateAssetRequest{}
 	if err := c.BindJSON(&body); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	body.OwnerId = userUUID
 
-	asset, err := rH.ucHandler.CreateNewAsset(body.MapToUpdatableFields())
+	asset, err := rH.ucHandler.CreateNewAsset(body.OwnerId, body.MapToUpdatableFields())
 	if asset != nil && err == nil {
 		c.JSON(http.StatusCreated, dto.MapAssetDomainToDto(asset))
 		return

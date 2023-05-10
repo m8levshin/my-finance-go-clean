@@ -34,12 +34,12 @@ func (rH *RouterHandler) usersRoutes(api *gin.RouterGroup) {
 	usersApi.GET("/:uuid", rH.getUserById)
 	usersApi.POST("", rH.createUser)
 	usersApi.GET("/:uuid/assets", rH.getAssetsByUser)
-	usersApi.POST("/:uuid/assets", rH.postAssetForUser)
 }
 
 func (rH *RouterHandler) assetsRoutes(api *gin.RouterGroup) {
 	assetsApi := api.Group("/assets")
 	assetsApi.GET("/:uuid", rH.getTransactionsByAssetId)
+	assetsApi.POST("", rH.postAsset)
 }
 
 func createErrorHandlerMiddleware() gin.HandlerFunc {

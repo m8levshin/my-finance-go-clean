@@ -21,5 +21,5 @@ type UserLogic interface {
 type AssetLogic interface {
 	GetAssetsByUserId(userUUID uuid.UUID) ([]*domainasset.Asset, error)
 	GetTransactionsByAssetId(assetId uuid.UUID) ([]*domainasset.Transaction, error)
-	CreateNewAsset(newAssetFields map[domain.UpdatableProperty]any) (*domainasset.Asset, error)
+	CreateNewAsset(ownerId *uuid.UUID, newAssetFields map[domain.UpdatableProperty]any) (*domainasset.Asset, error)
 }

@@ -28,12 +28,13 @@ func (k *keeper) GetTransactionsByAssetId(assetId uuid.UUID) ([]*domainasset.Tra
 	return transactions, nil
 }
 
-func (k *keeper) CreateNewAsset(newAssetFields map[domain.UpdatableProperty]any) (*domainasset.Asset, error) {
+func (k *keeper) CreateNewAsset(
+	ownerId *uuid.UUID,
+	newAssetFields map[domain.UpdatableProperty]any,
+) (*domainasset.Asset, error) {
 
-	name := (newAssetFields[domainasset.NameField]).(*string)
-
-	ownerId := (newAssetFields[domainasset.OwnerField]).(*uuid.UUID)
-	owner, err := k.userRw.FindById(domain.Id(*ownerId))
+	ownerDomainId := domain.Id(*ownerId)
+	owner, err := k.userRw.FindById(ownerDomainId)
 	if err != nil {
 		return nil, err
 	}
@@ -41,6 +42,7 @@ func (k *keeper) CreateNewAsset(newAssetFields map[domain.UpdatableProperty]any)
 		return nil, errors.New("owner is not found")
 	}
 
+	name := (newAssetFields[domainasset.NameField]).(*string)
 	currency := (newAssetFields[domainasset.CurrencyField]).(*string)
 	limit := (newAssetFields[domainasset.LimitField]).(*float64)
 
@@ -52,7 +54,7 @@ func (k *keeper) CreateNewAsset(newAssetFields map[domain.UpdatableProperty]any)
 
 	newAsset, err := domainasset.CreateAsset(
 		domainasset.SetName(*name),
-		domainasset.SetOwner(domain.Id(*ownerId)),
+		domainasset.SetOwner(ownerDomainId),
 		domainasset.SetCurrency(domainasset.Currency(*currency)),
 		domainasset.SetType(*assetType),
 		domainasset.SetLimit(*limit),
