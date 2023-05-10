@@ -24,5 +24,28 @@ func (rH *RouterHandler) getTransactionsByAssetId(c *gin.Context) {
 	for _, transaction := range transactions {
 		transactionDtos = append(transactionDtos, dto.MapTransactionDomainToDto(transaction))
 	}
-	c.JSON(http.StatusOK, transactions)
+	c.JSON(http.StatusOK, transactionDtos)
+}
+
+func (rH *RouterHandler) addNewTransaction(c *gin.Context) {
+	assetUUIDParam := c.Param("uuid")
+	assetUUID, err := uuid.Parse(assetUUIDParam)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	addNewTransactionRequest := dto.AddNewTransactionRequest{}
+	if err := c.BindJSON(&addNewTransactionRequest); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	newTransaction, err := rH.ucHandler.AddNewTransaction(assetUUID, &addNewTransactionRequest)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusCreated, dto.MapTransactionDomainToDto(newTransaction))
 }

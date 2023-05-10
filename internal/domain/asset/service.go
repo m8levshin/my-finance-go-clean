@@ -2,25 +2,32 @@ package asset
 
 import (
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
+	"time"
 )
 
-func AddTransaction(a *Asset, assetTransactions []*Transaction, trx Transaction) (*Asset, []*Transaction, error) {
+func AddTransaction(a *Asset, assetTransactions []*Transaction, volume float64) (*Transaction, error) {
 
-	err := validator.validateBalanceAndLimitForTransaction(a, &trx)
-	if err != nil {
-		return nil, nil, err
+	newTransaction := Transaction{
+		Id:        domain.NewID(),
+		CreatedAt: time.Now(),
+		AssetId:   a.Id,
+		Volume:    volume,
 	}
 
-	trx.Id = domain.NewID()
-	assetTransactions = append(assetTransactions, &trx)
-	a.Balance = a.Balance - trx.Volume
+	err := validator.validateBalanceAndLimitForTransaction(a, &newTransaction)
+	if err != nil {
+		return nil, err
+	}
+
+	assetTransactions = append(assetTransactions, &newTransaction)
+	a.Balance = a.Balance + newTransaction.Volume
 
 	err = a.checkTransaction(assetTransactions)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return a, assetTransactions, nil
+	return &newTransaction, nil
 }
 
 func CreateNewAsset(opts ...func(a *Asset) error) (*Asset, error) {

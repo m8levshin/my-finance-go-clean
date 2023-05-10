@@ -56,10 +56,15 @@ func (k *keeper) CreateNewAsset(ownerId *uuid.UUID, newAssetFields map[domain.Up
 		domainasset.SetType(*assetType),
 		domainasset.SetLimit(*limit),
 	)
+	if err != nil {
+		return nil, err
+	}
+
 	err = k.assetRw.Save(*newAsset)
 	if err != nil {
 		return nil, err
 	}
+
 	return newAsset, err
 }
 

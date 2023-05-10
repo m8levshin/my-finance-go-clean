@@ -7,9 +7,13 @@ import (
 )
 
 type TransactionDto struct {
-	Id        uuid.UUID
-	CreatedAt time.Time
-	Volume    float64
+	Id        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"createdAt"`
+	Volume    float64   `json:"volume"`
+}
+
+type AddNewTransactionRequest struct {
+	Volume float64 `json:"volume" binding:"required"`
 }
 
 func MapTransactionDomainToDto(domain *domainasset.Transaction) *TransactionDto {

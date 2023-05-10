@@ -32,6 +32,7 @@ type AssetDto struct {
 	Limit    float64    `json:"limit"`
 	OwnerId  *uuid.UUID `json:"ownerId"`
 	Currency string     `json:"currency"`
+	Balance  float64    `json:"balance"`
 }
 
 func MapAssetDomainToDto(r *domainasset.Asset) *AssetDto {
@@ -43,5 +44,6 @@ func MapAssetDomainToDto(r *domainasset.Asset) *AssetDto {
 		Limit:    r.Limit,
 		OwnerId:  &ownerId,
 		Currency: string(r.Currency),
+		Balance:  r.Balance,
 	}
 }

@@ -34,8 +34,8 @@ func NewMemoryAssetRW(userRW *rw.UserRW) rw.AssetRW {
 
 func (a assetRW) FindById(assetId domain.Id) (*domainasset.Asset, error) {
 	value, _ := a.store.Load(assetId)
-	memoryAsset := value.(*memoryAsset)
-	domainAsset := memoryAssetToDomain(memoryAsset)
+	memoryAsset := value.(memoryAsset)
+	domainAsset := memoryAssetToDomain(&memoryAsset)
 	return domainAsset, nil
 }
 

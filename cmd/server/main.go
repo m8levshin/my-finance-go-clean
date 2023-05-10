@@ -12,9 +12,11 @@ func main() {
 	engine := gin.Default()
 	userRw := memory_rw.NewMemoryUserRW()
 	assetRw := memory_rw.NewMemoryAssetRW(&userRw)
+	transactionRw := memory_rw.NewMemoryTransactionRW()
+
 	server.
 		NewRouter(
-			uc.HandlerBuilder{UserRw: userRw, AssetRw: assetRw}.Build(),
+			uc.HandlerBuilder{UserRw: userRw, AssetRw: assetRw, TransactionRw: transactionRw}.Build(),
 			logger.NewLogger("debug", "text"),
 		).
 		SetRoutes(engine).

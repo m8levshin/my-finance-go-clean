@@ -21,9 +21,9 @@ const (
 )
 
 func (v *assetValidator) validateBalanceAndLimitForTransaction(a *Asset, trx *Transaction) error {
-	resultBalance := a.Balance - trx.Volume
-	if resultBalance < 0 && !allowDebit[a.Type] {
+	resultBalance := a.Balance + trx.Volume
 
+	if resultBalance < 0 && !allowDebit[a.Type] {
 		return errors.New(DebitNotAllowed)
 	} else if allowDebit[a.Type] {
 		if resultBalance+a.Limit < 0 {
@@ -40,7 +40,7 @@ func (v *assetValidator) validateAssetForCreateAndUpdate(a *Asset) error {
 		validation.Field(&a.Name, validation.Required, validation.Length(3, 50)),
 		validation.Field(&a.Currency, validation.Required),
 		validation.Field(&a.OwnerId, validation.Required),
-		validation.Field(&a.Type, validation.Required),
+		validation.Field(&a.Type, validation.NotNil),
 	)
 	if err != nil {
 		return err
