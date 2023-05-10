@@ -13,10 +13,16 @@ func main() {
 	userRw := memory_rw.NewMemoryUserRW()
 	assetRw := memory_rw.NewMemoryAssetRW(&userRw)
 	transactionRw := memory_rw.NewMemoryTransactionRW()
+	transactionGroupRw := memory_rw.NewMemoryTransactionGroupRW()
 
 	server.
 		NewRouter(
-			uc.HandlerBuilder{UserRw: userRw, AssetRw: assetRw, TransactionRw: transactionRw}.Build(),
+			uc.HandlerBuilder{
+				UserRw:             userRw,
+				AssetRw:            assetRw,
+				TransactionRw:      transactionRw,
+				TransactionGroupRw: transactionGroupRw,
+			}.Build(),
 			logger.NewLogger("debug", "text"),
 		).
 		SetRoutes(engine).

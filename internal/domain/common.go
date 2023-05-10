@@ -9,3 +9,7 @@ type Id uuid.UUID
 func NewID() Id {
 	return Id(uuid.New())
 }
+
+func (i *Id) String() string {
+	return uuid.UUID(*i).String()
+}

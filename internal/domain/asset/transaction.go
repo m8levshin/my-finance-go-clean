@@ -6,8 +6,9 @@ import (
 )
 
 type Transaction struct {
-	Id        domain.Id
-	CreatedAt time.Time
-	AssetId   domain.Id
-	Volume    float64
+	Id                 domain.Id
+	CreatedAt          time.Time
+	AssetId            domain.Id
+	Volume             float64
+	TransactionGroupId domain.Id
 }
