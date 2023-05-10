@@ -39,8 +39,7 @@ func (v *assetValidator) validateAssetForCreateAndUpdate(a *Asset) error {
 		a,
 		validation.Field(&a.Name, validation.Required, validation.Length(3, 50)),
 		validation.Field(&a.Currency, validation.Required),
-		validation.Field(&a.Owner, validation.Required),
-		validation.Field(&a.Owner.Id, validation.Required),
+		validation.Field(&a.OwnerId, validation.Required),
 		validation.Field(&a.Type, validation.Required),
 	)
 	if err != nil {

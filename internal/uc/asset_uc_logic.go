@@ -25,19 +25,15 @@ func (k *keeper) GetTransactionsByAssetId(assetId uuid.UUID) ([]*domainasset.Tra
 	if err != nil {
 		return nil, err
 	}
-
-	for _, elem := range transactions {
-		transactions = append(transactions, elem)
-	}
 	return transactions, nil
 }
 
 func (k *keeper) CreateNewAsset(newAssetFields map[domain.UpdatableProperty]any) (*domainasset.Asset, error) {
 
-	name := (newAssetFields[domainasset.NameField]).(string)
+	name := (newAssetFields[domainasset.NameField]).(*string)
 
-	ownerId := (newAssetFields[domainasset.OwnerField]).(uuid.UUID)
-	owner, err := k.userRw.FindById(domain.Id(ownerId))
+	ownerId := (newAssetFields[domainasset.OwnerField]).(*uuid.UUID)
+	owner, err := k.userRw.FindById(domain.Id(*ownerId))
 	if err != nil {
 		return nil, err
 	}
@@ -45,8 +41,8 @@ func (k *keeper) CreateNewAsset(newAssetFields map[domain.UpdatableProperty]any)
 		return nil, errors.New("owner is not found")
 	}
 
-	currency := (newAssetFields[domainasset.CurrencyField]).(string)
-	limit := (newAssetFields[domainasset.LimitField]).(float64)
+	currency := (newAssetFields[domainasset.CurrencyField]).(*string)
+	limit := (newAssetFields[domainasset.LimitField]).(*float64)
 
 	assetTypeName := (newAssetFields[domainasset.TypeField]).(*string)
 	assetType := utils.ResolveAssetTypeByName(*assetTypeName)
@@ -55,11 +51,15 @@ func (k *keeper) CreateNewAsset(newAssetFields map[domain.UpdatableProperty]any)
 	}
 
 	newAsset, err := domainasset.CreateAsset(
-		domainasset.SetName(name),
-		domainasset.SetOwner(domain.Id(ownerId)),
-		domainasset.SetCurrency(domainasset.Currency(currency)),
-		domainasset.SetType(assetType),
-		domainasset.SetLimit(limit),
+		domainasset.SetName(*name),
+		domainasset.SetOwner(domain.Id(*ownerId)),
+		domainasset.SetCurrency(domainasset.Currency(*currency)),
+		domainasset.SetType(*assetType),
+		domainasset.SetLimit(*limit),
 	)
+	err = k.assetRw.Save(*newAsset)
+	if err != nil {
+		return nil, err
+	}
 	return newAsset, err
 }

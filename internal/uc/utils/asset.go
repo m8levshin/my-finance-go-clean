@@ -1,10 +1,13 @@
 package utils
 
-import domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
+import (
+	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
+	"strings"
+)
 
 func ResolveAssetTypeByName(name string) *domainasset.Type {
 	for assetType, assetName := range domainasset.TypeNames {
-		if name == assetName {
+		if strings.EqualFold(assetName, name) {
 			return &assetType
 		}
 	}

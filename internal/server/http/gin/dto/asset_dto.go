@@ -9,7 +9,7 @@ import (
 type CreateAssetRequest struct {
 	Name     string    `json:"name" binding:"required"`
 	Type     string    `json:"type" binding:"required"`
-	Limit    string    `json:"limit" binding:"required"`
+	Limit    float64   `json:"limit" binding:"required"`
 	OwnerId  uuid.UUID `json:"ownerId"`
 	Currency string    `json:"currency" binding:"required"`
 }

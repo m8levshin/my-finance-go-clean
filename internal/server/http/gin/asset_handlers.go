@@ -22,8 +22,12 @@ func (rH *RouterHandler) getAssetsByUser(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, assets)
 
+	assetDtos := make([]dto.AssetDto, 0, len(assets))
+	for _, asset := range assets {
+		assetDtos = append(assetDtos, *dto.MapAssetDomainToDto(asset))
+	}
+	c.JSON(http.StatusOK, assetDtos)
 }
 
 func (rH *RouterHandler) getTransactionsByAssetId(c *gin.Context) {
