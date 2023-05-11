@@ -6,8 +6,8 @@ import (
 )
 
 type TransactionGroupRW interface {
-	GetTransactionGroupsByIds(groupIds []*domain.Id) ([]*asset.TransactionGroup, error)
-	GetTransactionGroupById(groupId *domain.Id) (*asset.TransactionGroup, error)
+	GetTransactionGroupsByIds(groupIds []domain.Id) ([]*asset.TransactionGroup, error)
+	GetTransactionGroupById(groupId domain.Id) (*asset.TransactionGroup, error)
 	Save(transactionGroup *asset.TransactionGroup) (*asset.TransactionGroup, error)
-	GetTransactionGroupsByUserId(userId *domain.Id) ([]*asset.TransactionGroup, error)
+	GetTransactionGroupsByUserId(userId domain.Id) ([]*asset.TransactionGroup, error)
 }

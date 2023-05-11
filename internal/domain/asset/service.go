@@ -5,13 +5,19 @@ import (
 	"time"
 )
 
-func AddTransaction(a *Asset, assetTransactions []*Transaction, volume float64) (*Transaction, error) {
+func AddTransaction(
+	a *Asset,
+	assetTransactions []*Transaction,
+	volume float64,
+	transactionGroup *TransactionGroup,
+) (*Transaction, error) {
 
 	newTransaction := Transaction{
-		Id:        domain.NewID(),
-		CreatedAt: time.Now(),
-		AssetId:   a.Id,
-		Volume:    volume,
+		Id:                 domain.NewID(),
+		CreatedAt:          time.Now(),
+		AssetId:            a.Id,
+		Volume:             volume,
+		TransactionGroupId: transactionGroup.Id,
 	}
 
 	err := validator.validateBalanceAndLimitForTransaction(a, &newTransaction)

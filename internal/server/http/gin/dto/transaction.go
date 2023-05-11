@@ -23,6 +23,6 @@ func MapTransactionDomainToDto(domainEntity *domainasset.Transaction) *Transacti
 		Id:                 uuid.UUID(domainEntity.Id),
 		CreatedAt:          domainEntity.CreatedAt,
 		Volume:             domainEntity.Volume,
-		TransactionGroupId: uuid.UUID(domainEntity.TransactionGroup.Id),
+		TransactionGroupId: uuid.UUID(domainEntity.TransactionGroupId),
 	}
 }

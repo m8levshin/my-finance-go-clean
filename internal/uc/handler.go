@@ -12,6 +12,7 @@ type Handler interface {
 	UserLogic
 	AssetLogic
 	TransactionLogic
+	TransactionGroupLogic
 }
 
 type UserLogic interface {
@@ -23,10 +24,14 @@ type UserLogic interface {
 type AssetLogic interface {
 	GetAssetsByUserId(userUUID uuid.UUID) ([]*domainasset.Asset, error)
 	GetTransactionsByAssetId(assetId uuid.UUID) ([]*domainasset.Transaction, error)
-	CreateNewAsset(userId *uuid.UUID, newAssetFields map[domain.UpdatableProperty]any) (*domainasset.Asset, error)
+	CreateNewAsset(userId uuid.UUID, newAssetFields map[domain.UpdatableProperty]any) (*domainasset.Asset, error)
 	GetAssetById(assetId uuid.UUID) (*domainasset.Asset, error)
 }
 
 type TransactionLogic interface {
 	AddNewTransaction(assetUUID uuid.UUID, d *dto.AddNewTransactionRequest) (*domainasset.Transaction, error)
+}
+
+type TransactionGroupLogic interface {
+	GetTransactionGroupsByUser(userId uuid.UUID) ([]*domainasset.TransactionGroup, error)
 }

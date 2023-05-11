@@ -19,7 +19,7 @@ func NewMemoryTransactionGroupRW() rw.TransactionGroupRW {
 	}
 }
 
-func (t *transactionGroupRw) GetTransactionGroupsByIds(groupIds []*domain.Id) ([]*domainasset.TransactionGroup, error) {
+func (t *transactionGroupRw) GetTransactionGroupsByIds(groupIds []domain.Id) ([]*domainasset.TransactionGroup, error) {
 	transactionGroups := make([]*domainasset.TransactionGroup, 0)
 	for _, groupId := range groupIds {
 		group, _ := t.GetTransactionGroupById(groupId)
@@ -32,8 +32,8 @@ func (t *transactionGroupRw) GetTransactionGroupsByIds(groupIds []*domain.Id) ([
 	return transactionGroups, nil
 }
 
-func (t *transactionGroupRw) GetTransactionGroupById(groupId *domain.Id) (*domainasset.TransactionGroup, error) {
-	value, found := t.store.Load(*groupId)
+func (t *transactionGroupRw) GetTransactionGroupById(groupId domain.Id) (*domainasset.TransactionGroup, error) {
+	value, found := t.store.Load(groupId)
 	if found {
 		trxGroup := value.(domainasset.TransactionGroup)
 		return &trxGroup, nil
@@ -49,11 +49,11 @@ func (t *transactionGroupRw) Save(
 	return transactionGroup, nil
 }
 
-func (t *transactionGroupRw) GetTransactionGroupsByUserId(userId *domain.Id) ([]*domainasset.TransactionGroup, error) {
+func (t *transactionGroupRw) GetTransactionGroupsByUserId(userId domain.Id) ([]*domainasset.TransactionGroup, error) {
 	userTransactionGroups := make([]*domainasset.TransactionGroup, 0)
 	t.store.Range(func(key, value any) bool {
 		trxGroup := value.(domainasset.TransactionGroup)
-		if trxGroup.UserId == *userId {
+		if trxGroup.UserId == userId {
 			userTransactionGroups = append(userTransactionGroups, &trxGroup)
 		}
 		return true
