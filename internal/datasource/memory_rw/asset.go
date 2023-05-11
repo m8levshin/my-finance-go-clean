@@ -1,6 +1,7 @@
 package memory_rw
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/google/uuid"
@@ -34,6 +35,10 @@ func NewMemoryAssetRW(userRW *rw.UserRW) rw.AssetRW {
 
 func (a assetRW) FindById(assetId domain.Id) (*domainasset.Asset, error) {
 	value, _ := a.store.Load(assetId)
+	if value == nil {
+		return nil, errors.New("asset is not found")
+	}
+
 	memoryAsset := value.(memoryAsset)
 	domainAsset := memoryAssetToDomain(&memoryAsset)
 	return domainAsset, nil

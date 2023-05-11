@@ -23,6 +23,6 @@ func (b HandlerBuilder) Build() Handler {
 		userRw:             b.UserRw,
 		assetRw:            b.AssetRw,
 		transactionRw:      b.TransactionRw,
-		transactionGroupRw: b.TransactionGroupRW,
+		transactionGroupRw: b.TransactionGroupRw,
 	}
 }

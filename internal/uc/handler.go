@@ -34,4 +34,5 @@ type TransactionLogic interface {
 
 type TransactionGroupLogic interface {
 	GetTransactionGroupsByUser(userId uuid.UUID) ([]*domainasset.TransactionGroup, error)
+	CreateNewTransactionGroup(userId uuid.UUID, req dto.CreateTransactionGroupRequest) (*domainasset.TransactionGroup, error)
 }

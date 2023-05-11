@@ -35,6 +35,7 @@ func (rH *RouterHandler) usersRoutes(api *gin.RouterGroup) {
 	usersApi.POST("", rH.createUser)
 	usersApi.GET("/:uuid/assets", rH.getAssetsByUser)
 	usersApi.GET("/:uuid/groups", rH.getGroupsByUser)
+	usersApi.POST("/:uuid/groups", rH.createGroup)
 }
 
 func (rH *RouterHandler) assetsRoutes(api *gin.RouterGroup) {

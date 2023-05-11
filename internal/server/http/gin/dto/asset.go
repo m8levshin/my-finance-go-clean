@@ -7,11 +7,11 @@ import (
 )
 
 type CreateAssetRequest struct {
-	Name     string     `json:"name" binding:"required"`
-	Type     string     `json:"type" binding:"required"`
-	Limit    float64    `json:"limit" binding:"required"`
-	UserId   *uuid.UUID `json:"userId" binding:"required"`
-	Currency string     `json:"currency" binding:"required"`
+	Name     string    `json:"name" binding:"required"`
+	Type     string    `json:"type" binding:"required"`
+	Limit    float64   `json:"limit" binding:"required"`
+	UserId   uuid.UUID `json:"userId" binding:"required"`
+	Currency string    `json:"currency" binding:"required"`
 }
 
 func (r *CreateAssetRequest) MapToUpdatableFields() map[domain.UpdatableProperty]any {

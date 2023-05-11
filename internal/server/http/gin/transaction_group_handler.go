@@ -10,21 +10,43 @@ import (
 func (rH *RouterHandler) getGroupsByUser(c *gin.Context) {
 	userUUIDParam := c.Param("uuid")
 	userUUID, err := uuid.Parse(userUUIDParam)
-
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	assets, err := rH.ucHandler.GetAssetsByUserId(userUUID)
+	transactionGroups, err := rH.ucHandler.GetTransactionGroupsByUser(userUUID)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	assetDtos := make([]dto.AssetDto, 0, len(assets))
-	for _, asset := range assets {
-		assetDtos = append(assetDtos, *dto.MapAssetDomainToDto(asset))
+	transactionGroupDtos := make([]dto.TransactionGroupDto, 0, len(transactionGroups))
+	for _, transactionGroup := range transactionGroups {
+		transactionGroupDtos = append(transactionGroupDtos, *dto.MapTransactionGroupDomainToDto(transactionGroup))
 	}
-	c.JSON(http.StatusOK, assetDtos)
+	c.JSON(http.StatusOK, transactionGroupDtos)
+}
+
+func (rH *RouterHandler) createGroup(c *gin.Context) {
+	userUUIDParam := c.Param("uuid")
+	userUUID, err := uuid.Parse(userUUIDParam)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	createRequest := dto.CreateTransactionGroupRequest{}
+	if err := c.BindJSON(&createRequest); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	newTransactionGroup, err := rH.ucHandler.CreateNewTransactionGroup(userUUID, createRequest)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	c.JSON(http.StatusCreated, dto.MapTransactionGroupDomainToDto(newTransactionGroup))
 }

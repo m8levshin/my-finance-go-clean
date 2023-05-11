@@ -38,7 +38,7 @@ func (k *keeper) AddNewTransaction(assetUUID uuid.UUID, req *dto.AddNewTransacti
 	if err != nil {
 		return nil, err
 	}
-	if transactionGroup != nil {
+	if transactionGroup == nil {
 		return nil, errors.New("transaction group is not found")
 	}
 

@@ -2,6 +2,7 @@ package asset
 
 import (
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/user"
 	"time"
 )
 
@@ -51,4 +52,18 @@ func CreateNewAsset(opts ...func(a *Asset) error) (*Asset, error) {
 	}
 
 	return &newAsset, nil
+}
+
+func CreateNewTransactionGroup(user *user.User, parentTG *TransactionGroup, name string) (*TransactionGroup, error) {
+	var parentTGId *domain.Id
+	if parentTG != nil {
+		parentTGId = &parentTG.Id
+	}
+
+	return &TransactionGroup{
+		Id:       domain.NewID(),
+		ParentId: parentTGId,
+		UserId:   user.Id,
+		Name:     name,
+	}, nil
 }

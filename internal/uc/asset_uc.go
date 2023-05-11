@@ -16,10 +16,10 @@ func (k *keeper) GetAssetsByUserId(userUUID uuid.UUID) ([]*domainasset.Asset, er
 	return assets, nil
 }
 
-func (k *keeper) CreateNewAsset(userId uuid.UUID, newAssetFields map[domain.UpdatableProperty]any) (*domainasset.Asset, error) {
+func (k *keeper) CreateNewAsset(userUUID uuid.UUID, newAssetFields map[domain.UpdatableProperty]any) (*domainasset.Asset, error) {
 
-	userDomainId := domain.Id(userId)
-	user, err := k.userRw.FindById(userDomainId)
+	userId := domain.Id(userUUID)
+	user, err := k.userRw.FindById(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func (k *keeper) CreateNewAsset(userId uuid.UUID, newAssetFields map[domain.Upda
 
 	newAsset, err := domainasset.CreateAsset(
 		domainasset.SetName(*name),
-		domainasset.SetUserId(userDomainId),
+		domainasset.SetUserId(userId),
 		domainasset.SetCurrency(domainasset.Currency(*currency)),
 		domainasset.SetType(*assetType),
 		domainasset.SetLimit(*limit),
