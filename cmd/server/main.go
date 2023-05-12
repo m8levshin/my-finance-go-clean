@@ -2,19 +2,31 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/mlevshin/my-finance-go-clean/internal/datasource/memory_rw"
-	"github.com/mlevshin/my-finance-go-clean/internal/logger"
+	"github.com/mlevshin/my-finance-go-clean/internal/rw/gorm"
+	"github.com/mlevshin/my-finance-go-clean/internal/rw/memory"
 	server "github.com/mlevshin/my-finance-go-clean/internal/server/http/gin"
 	"github.com/mlevshin/my-finance-go-clean/internal/uc"
+	"log"
+	_ "net/http/pprof"
 )
 
 func main() {
-	engine := gin.Default()
-	userRw := memory_rw.NewMemoryUserRW()
-	assetRw := memory_rw.NewMemoryAssetRW(&userRw)
-	transactionRw := memory_rw.NewMemoryTransactionRW()
-	transactionGroupRw := memory_rw.NewMemoryTransactionGroupRW()
 
+	db, err := gorm.InitGorm()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	userRw, err := gorm.NewUserRw(db)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	assetRw := memory.NewMemoryAssetRW(&userRw)
+	transactionRw := memory.NewMemoryTransactionRW()
+	transactionGroupRw := memory.NewMemoryTransactionGroupRW()
+
+	engine := gin.Default()
 	server.
 		NewRouter(
 			uc.HandlerBuilder{
@@ -23,7 +35,6 @@ func main() {
 				TransactionRw:      transactionRw,
 				TransactionGroupRw: transactionGroupRw,
 			}.Build(),
-			logger.NewLogger("debug", "text"),
 		).
 		SetRoutes(engine).
 		Run()

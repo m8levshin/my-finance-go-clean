@@ -22,5 +22,5 @@ func (v *userValidator) validateForCreateAndUpdate(u *User) error {
 }
 
 func (v *userValidator) checkRawPassword(pwd string) error {
-	return validation.Validate(pwd, validation.Length(10, 100))
+	return validation.Validate(pwd, validation.Length(6, 100))
 }

@@ -6,6 +6,7 @@ import (
 )
 
 type UserRW interface {
+	FindByEmail(email string) (*domainuser.User, error)
 	FindAll() ([]*domainuser.User, error)
 	FindById(id domain.Id) (*domainuser.User, error)
 	Save(user domainuser.User) error

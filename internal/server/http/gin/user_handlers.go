@@ -46,16 +46,20 @@ func (rH *RouterHandler) getUserById(c *gin.Context) {
 }
 
 func (rH *RouterHandler) createUser(c *gin.Context) {
+
 	body := dto.CreateUserRequest{}
 	if err := c.BindJSON(&body); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	user, err := rH.ucHandler.CreateNewUser(body.MapToUpdatableFields())
+
+	user, err := rH.ucHandler.CreateNewUser(*body.MapToUpdatableFields())
+
 	if user != nil && err == nil {
 		c.JSON(http.StatusCreated, dto.MapUserDomainToDto(user))
 		return
 	}
+
 	if err != nil {
 		c.Status(500)
 		c.Error(err)

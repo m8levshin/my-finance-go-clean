@@ -30,7 +30,7 @@ func SetPassword(password *string) func(u *User) error {
 		if err := validator.checkRawPassword(*password); err != nil {
 			return err
 		}
-		newPasswordHash, err := bcrypt.GenerateFromPassword([]byte(*password), bcrypt.DefaultCost)
+		newPasswordHash, err := bcrypt.GenerateFromPassword([]byte(*password), bcrypt.MinCost)
 		if err != nil {
 			return err
 		}

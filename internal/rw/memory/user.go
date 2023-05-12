@@ -1,4 +1,4 @@
-package memory_rw
+package memory
 
 import (
 	"errors"
@@ -10,6 +10,11 @@ import (
 
 type userRW struct {
 	store *sync.Map
+}
+
+func (rw userRW) FindByEmail(email string) (*domainuser.User, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func NewMemoryUserRW() rw.UserRW {

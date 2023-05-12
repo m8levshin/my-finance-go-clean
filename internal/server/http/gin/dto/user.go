@@ -7,19 +7,19 @@ import (
 )
 
 type CreateUserRequest struct {
-	Name     string `json:"name" binding:"required"`
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
-func (r *CreateUserRequest) MapToUpdatableFields() map[domain.UpdatableProperty]any {
+func (r *CreateUserRequest) MapToUpdatableFields() *map[domain.UpdatableProperty]any {
 
 	createUserFields := map[domain.UpdatableProperty]any{}
 	createUserFields[domainuser.NameField] = &(r.Name)
 	createUserFields[domainuser.EmailField] = &(r.Email)
 	createUserFields[domainuser.PasswordField] = &(r.Password)
 
-	return createUserFields
+	return &createUserFields
 }
 
 type UserDto struct {

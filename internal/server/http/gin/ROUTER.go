@@ -2,20 +2,17 @@ package gin
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/mlevshin/my-finance-go-clean/internal/domain"
 	"github.com/mlevshin/my-finance-go-clean/internal/uc"
 )
 
 type RouterHandler struct {
 	ucHandler         uc.Handler
-	logger            domain.Logger
 	mutualMiddlewares []gin.HandlerFunc
 }
 
-func NewRouter(ucHandler uc.Handler, logger domain.Logger) *RouterHandler {
+func NewRouter(ucHandler uc.Handler) *RouterHandler {
 	return &RouterHandler{
 		ucHandler:         ucHandler,
-		logger:            logger,
 		mutualMiddlewares: []gin.HandlerFunc{createErrorHandlerMiddleware()},
 	}
 }

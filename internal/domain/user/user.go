@@ -16,6 +16,7 @@ var (
 )
 
 func CreateUser(opts ...func(u *User) error) (*User, error) {
+
 	newUser := User{
 		Id: domain.NewID(),
 	}

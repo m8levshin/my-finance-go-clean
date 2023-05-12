@@ -1,4 +1,4 @@
-package memory_rw
+package memory
 
 import (
 	"github.com/google/uuid"
