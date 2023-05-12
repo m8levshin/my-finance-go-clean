@@ -3,7 +3,7 @@ package memory
 import (
 	"errors"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
-	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
+	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/transaction_group"
 	"github.com/mlevshin/my-finance-go-clean/internal/uc/rw"
 	"sync"
 )

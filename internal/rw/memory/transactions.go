@@ -3,7 +3,7 @@ package memory
 import (
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
-	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
 	"github.com/mlevshin/my-finance-go-clean/internal/uc/rw"
 	"sync"
 )
@@ -18,11 +18,11 @@ func NewMemoryTransactionRW() rw.TransactionRW {
 	}
 }
 
-func (t transactionRW) GetTransactionsByAsset(assetId domain.Id) ([]*domainasset.Transaction, error) {
-	value, _ := t.store.LoadOrStore(uuid.UUID(assetId), []domainasset.Transaction{})
-	transactions := value.([]domainasset.Transaction)
+func (t transactionRW) GetTransactionsByAsset(assetId domain.Id) ([]*asset.Transaction, error) {
+	value, _ := t.store.LoadOrStore(uuid.UUID(assetId), []asset.Transaction{})
+	transactions := value.([]asset.Transaction)
 
-	result := make([]*domainasset.Transaction, 0, len(transactions))
+	result := make([]*asset.Transaction, 0, len(transactions))
 	for _, transaction := range transactions {
 		result = append(result, &transaction)
 	}
@@ -30,16 +30,16 @@ func (t transactionRW) GetTransactionsByAsset(assetId domain.Id) ([]*domainasset
 	return result, nil
 }
 
-func (t transactionRW) AddTransaction(assetId domain.Id, transaction domainasset.Transaction) error {
+func (t transactionRW) AddTransaction(assetId domain.Id, transaction asset.Transaction) error {
 	assetUUID := uuid.UUID(assetId)
-	value, _ := t.store.LoadOrStore(assetUUID, []domainasset.Transaction{})
-	transactions := value.([]domainasset.Transaction)
+	value, _ := t.store.LoadOrStore(assetUUID, []asset.Transaction{})
+	transactions := value.([]asset.Transaction)
 	transactions = append(transactions, transaction)
 	t.store.Swap(assetUUID, transactions)
 	return nil
 }
 
-func (t transactionRW) SaveTransactionsByAsset(assetId domain.Id, transactions []domainasset.Transaction) error {
+func (t transactionRW) SaveTransactionsByAsset(assetId domain.Id, transactions []asset.Transaction) error {
 	assetUUID := uuid.UUID(assetId)
 	t.store.Store(assetUUID, transactions)
 	return nil

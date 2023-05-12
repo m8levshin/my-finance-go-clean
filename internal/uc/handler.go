@@ -4,8 +4,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
 	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/transaction_group"
 	domainuser "github.com/mlevshin/my-finance-go-clean/internal/domain/user"
 	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/dto"
+	"github.com/mlevshin/my-finance-go-clean/internal/uc/rw"
 )
 
 type Handler interface {
@@ -13,6 +15,38 @@ type Handler interface {
 	AssetLogic
 	TransactionLogic
 	TransactionGroupLogic
+}
+
+type handler struct {
+	userRw                  rw.UserRW
+	assetRw                 rw.AssetRW
+	transactionRw           rw.TransactionRW
+	transactionGroupRw      rw.TransactionGroupRW
+	userService             domainuser.UserDomainService
+	assetService            domainasset.AssetDomainService
+	transactionGroupService transaction_group.TransactionGroupDomainService
+}
+
+type HandlerBuilder struct {
+	UserRw                  rw.UserRW
+	AssetRw                 rw.AssetRW
+	TransactionRw           rw.TransactionRW
+	TransactionGroupRw      rw.TransactionGroupRW
+	UserService             domainuser.UserDomainService
+	AssetService            domainasset.AssetDomainService
+	TransactionGroupService transaction_group.TransactionGroupDomainService
+}
+
+func (b HandlerBuilder) Build() Handler {
+	return &handler{
+		userRw:                  b.UserRw,
+		assetRw:                 b.AssetRw,
+		transactionRw:           b.TransactionRw,
+		transactionGroupRw:      b.TransactionGroupRw,
+		userService:             b.UserService,
+		assetService:            b.AssetService,
+		transactionGroupService: b.TransactionGroupService,
+	}
 }
 
 type UserLogic interface {
@@ -33,6 +67,6 @@ type TransactionLogic interface {
 }
 
 type TransactionGroupLogic interface {
-	GetTransactionGroupsByUser(userId uuid.UUID) ([]*domainasset.TransactionGroup, error)
-	CreateNewTransactionGroup(userId uuid.UUID, req dto.CreateTransactionGroupRequest) (*domainasset.TransactionGroup, error)
+	GetTransactionGroupsByUser(userId uuid.UUID) ([]*transaction_group.TransactionGroup, error)
+	CreateNewTransactionGroup(userId uuid.UUID, req dto.CreateTransactionGroupRequest) (*transaction_group.TransactionGroup, error)
 }

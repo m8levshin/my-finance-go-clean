@@ -4,11 +4,11 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
-	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
 	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/dto"
 )
 
-func (k *keeper) GetTransactionsByAssetId(assetId uuid.UUID) ([]*domainasset.Transaction, error) {
+func (k *handler) GetTransactionsByAssetId(assetId uuid.UUID) ([]*asset.Transaction, error) {
 	asset, err := k.assetRw.FindById(domain.Id(assetId))
 	if err != nil {
 		return nil, err
@@ -20,7 +20,7 @@ func (k *keeper) GetTransactionsByAssetId(assetId uuid.UUID) ([]*domainasset.Tra
 	return transactions, nil
 }
 
-func (k *keeper) AddNewTransaction(assetUUID uuid.UUID, req *dto.AddNewTransactionRequest) (*domainasset.Transaction, error) {
+func (k *handler) AddNewTransaction(assetUUID uuid.UUID, req *dto.AddNewTransactionRequest) (*asset.Transaction, error) {
 	asset, err := k.assetRw.FindById(domain.Id(assetUUID))
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (k *keeper) AddNewTransaction(assetUUID uuid.UUID, req *dto.AddNewTransacti
 		return nil, errors.New("transaction group is not found")
 	}
 
-	newTransaction, err := domainasset.AddTransaction(asset, transactions, req.Volume, transactionGroup)
+	newTransaction, err := k.assetService.AddTransaction(asset, transactions, req.Volume, transactionGroup)
 	if err != nil {
 		return nil, err
 	}

@@ -1,16 +1,17 @@
 package log
 
 import (
+	"github.com/mlevshin/my-finance-go-clean/internal/domain"
 	"github.com/sirupsen/logrus"
 )
 
-var logger *logrus.Logger
+var loggerInstance *logrus.Logger
 
 func init() {
 	InitLogger("info", "text")
 }
 
-func InitLogger(logLevel, logFormat string) {
+func InitLogger(logLevel, logFormat string) domain.Logger {
 	initLogger := logrus.New()
 	l, err := logrus.ParseLevel(logLevel)
 	if err != nil {
@@ -26,14 +27,33 @@ func InitLogger(logLevel, logFormat string) {
 	case "text":
 		logrus.SetFormatter(&logrus.TextFormatter{})
 	}
+	loggerInstance = initLogger
+	return &logger{}
+}
 
-	logger = initLogger
+type logger struct {
+}
+
+func (*logger) Info(args ...interface{}) {
+	loggerInstance.Info(args)
+}
+
+func (*logger) Error(args ...interface{}) {
+	loggerInstance.Error(args)
+}
+
+func (*logger) Fatal(args ...interface{}) {
+	loggerInstance.Fatal(args)
 }
 
 func Info(args ...interface{}) {
-	logger.Info(args)
+	loggerInstance.Info(args)
 }
 
 func Error(args ...interface{}) {
-	logger.Error(args)
+	loggerInstance.Error(args)
+}
+
+func Fatal(args ...interface{}) {
+	loggerInstance.Fatal(args)
 }

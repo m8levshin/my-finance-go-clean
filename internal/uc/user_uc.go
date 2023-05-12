@@ -7,15 +7,15 @@ import (
 	domainuser "github.com/mlevshin/my-finance-go-clean/internal/domain/user"
 )
 
-func (k *keeper) GetAllUsers() (users []*domainuser.User, err error) {
+func (k *handler) GetAllUsers() (users []*domainuser.User, err error) {
 	return (k.userRw).FindAll()
 }
 
-func (k *keeper) GetUserById(uuid uuid.UUID) (user *domainuser.User, err error) {
+func (k *handler) GetUserById(uuid uuid.UUID) (user *domainuser.User, err error) {
 	return (k.userRw).FindById(domain.Id(uuid))
 }
 
-func (k *keeper) CreateNewUser(
+func (k *handler) CreateNewUser(
 	newUserFields map[domain.UpdatableProperty]any,
 ) (user *domainuser.User, err error) {
 
@@ -31,7 +31,7 @@ func (k *keeper) CreateNewUser(
 		return nil, errors.New("user with that email is already exist")
 	}
 
-	createdUser, err := domainuser.CreateUser(
+	createdUser, err := k.userService.CreateUser(
 		domainuser.SetName(name),
 		domainuser.SetEmail(email),
 		domainuser.SetPassword(password),

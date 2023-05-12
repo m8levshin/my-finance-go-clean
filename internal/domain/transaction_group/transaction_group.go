@@ -1,4 +1,4 @@
-package asset
+package transaction_group
 
 import "github.com/mlevshin/my-finance-go-clean/internal/domain"
 

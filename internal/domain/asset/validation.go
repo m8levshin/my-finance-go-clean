@@ -5,27 +5,20 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 )
 
-//go:generate mockery --name AssetValidator
-type Validator interface {
-	validateBalanceAndLimitForTransaction(a *Asset, trx *Transaction) error
-	validateAssetForCreateAndUpdate(a *Asset) error
-}
-
-type assetValidator struct {
-}
-
 const (
+	NotAllowedAssetType = "not allowed type of the asset"
 	DebitNotAllowed     = "debit is not allowed"
 	ReachedLimits       = "you've reached limits"
-	NotAllowedAssetType = "not allowed type of the asset"
 )
 
-func (v *assetValidator) validateBalanceAndLimitForTransaction(a *Asset, trx *Transaction) error {
+const ()
+
+func validateBalanceAndLimitForTransaction(a *Asset, trx *Transaction) error {
 	resultBalance := a.Balance + trx.Volume
 
-	if resultBalance < 0 && !allowDebit[a.Type] {
+	if resultBalance < 0 && !AllowDebit[a.Type] {
 		return errors.New(DebitNotAllowed)
-	} else if allowDebit[a.Type] {
+	} else if AllowDebit[a.Type] {
 		if resultBalance+a.Limit < 0 {
 			return errors.New(ReachedLimits)
 		}
@@ -33,7 +26,7 @@ func (v *assetValidator) validateBalanceAndLimitForTransaction(a *Asset, trx *Tr
 	return nil
 }
 
-func (v *assetValidator) validateAssetForCreateAndUpdate(a *Asset) error {
+func validateAssetForCreateAndUpdate(a *Asset) error {
 
 	err := validation.ValidateStruct(
 		a,
@@ -46,7 +39,7 @@ func (v *assetValidator) validateAssetForCreateAndUpdate(a *Asset) error {
 		return err
 	}
 
-	if !allowedTypes[a.Type] {
+	if !AllowedTypes[a.Type] {
 		return errors.New(NotAllowedAssetType)
 	}
 	return nil

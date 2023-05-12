@@ -27,7 +27,7 @@ func SetEmail(email *string) func(u *User) error {
 
 func SetPassword(password *string) func(u *User) error {
 	return func(u *User) error {
-		if err := validator.checkRawPassword(*password); err != nil {
+		if err := checkRawPassword(*password); err != nil {
 			return err
 		}
 		newPasswordHash, err := bcrypt.GenerateFromPassword([]byte(*password), bcrypt.MinCost)

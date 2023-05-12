@@ -8,7 +8,7 @@ import (
 	"github.com/mlevshin/my-finance-go-clean/internal/uc/utils"
 )
 
-func (k *keeper) GetAssetsByUserId(userUUID uuid.UUID) ([]*domainasset.Asset, error) {
+func (k *handler) GetAssetsByUserId(userUUID uuid.UUID) ([]*domainasset.Asset, error) {
 	assets, err := k.assetRw.FindByUserId(domain.Id(userUUID))
 	if err != nil {
 		return nil, err
@@ -16,7 +16,7 @@ func (k *keeper) GetAssetsByUserId(userUUID uuid.UUID) ([]*domainasset.Asset, er
 	return assets, nil
 }
 
-func (k *keeper) CreateNewAsset(userUUID uuid.UUID, newAssetFields map[domain.UpdatableProperty]any) (*domainasset.Asset, error) {
+func (k *handler) CreateNewAsset(userUUID uuid.UUID, newAssetFields map[domain.UpdatableProperty]any) (*domainasset.Asset, error) {
 
 	userId := domain.Id(userUUID)
 	user, err := k.userRw.FindById(userId)
@@ -37,7 +37,7 @@ func (k *keeper) CreateNewAsset(userUUID uuid.UUID, newAssetFields map[domain.Up
 		return nil, errors.New("can't recognize asset type")
 	}
 
-	newAsset, err := domainasset.CreateAsset(
+	newAsset, err := k.assetService.CreateAsset(
 		domainasset.SetName(*name),
 		domainasset.SetUserId(userId),
 		domainasset.SetCurrency(domainasset.Currency(*currency)),
@@ -56,7 +56,7 @@ func (k *keeper) CreateNewAsset(userUUID uuid.UUID, newAssetFields map[domain.Up
 	return newAsset, err
 }
 
-func (k *keeper) GetAssetById(assetId uuid.UUID) (*domainasset.Asset, error) {
+func (k *handler) GetAssetById(assetId uuid.UUID) (*domainasset.Asset, error) {
 	asset, err := k.assetRw.FindById(domain.Id(assetId))
 	if err != nil {
 		return nil, err

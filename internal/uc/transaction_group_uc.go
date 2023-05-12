@@ -4,11 +4,11 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
-	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/transaction_group"
 	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/dto"
 )
 
-func (k *keeper) GetTransactionGroupsByUser(userId uuid.UUID) ([]*domainasset.TransactionGroup, error) {
+func (k *handler) GetTransactionGroupsByUser(userId uuid.UUID) ([]*transaction_group.TransactionGroup, error) {
 	user, err := k.userRw.FindById(domain.Id(userId))
 	if err != nil {
 		return nil, err
@@ -21,17 +21,17 @@ func (k *keeper) GetTransactionGroupsByUser(userId uuid.UUID) ([]*domainasset.Tr
 	return groups, err
 }
 
-func (k *keeper) CreateNewTransactionGroup(
+func (k *handler) CreateNewTransactionGroup(
 	userId uuid.UUID,
 	req dto.CreateTransactionGroupRequest,
-) (*domainasset.TransactionGroup, error) {
+) (*transaction_group.TransactionGroup, error) {
 
 	user, err := k.userRw.FindById(domain.Id(userId))
 	if err != nil {
 		return nil, err
 	}
 
-	var parentTransactionGroup *domainasset.TransactionGroup
+	var parentTransactionGroup *transaction_group.TransactionGroup
 	if req.ParentId != nil {
 		parentTransactionGroup, err = k.transactionGroupRw.GetTransactionGroupById(domain.Id(*req.ParentId))
 		if err != nil {
@@ -39,7 +39,8 @@ func (k *keeper) CreateNewTransactionGroup(
 		}
 	}
 
-	newTransactionGroup, err := domainasset.CreateNewTransactionGroup(user, parentTransactionGroup, req.Name)
+	newTransactionGroup, err := k.transactionGroupService.CreateNewTransactionGroup(user,
+		parentTransactionGroup, req.Name)
 	if err != nil {
 		return nil, err
 	}
