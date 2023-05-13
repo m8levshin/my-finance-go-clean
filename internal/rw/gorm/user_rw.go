@@ -1,6 +1,7 @@
 package gorm
 
 import (
+	"errors"
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
 	domainuser "github.com/mlevshin/my-finance-go-clean/internal/domain/user"
@@ -63,7 +64,11 @@ func (u *userRw) Save(user domainuser.User) error {
 
 func (u *userRw) FindByEmail(email string) (*domainuser.User, error) {
 	user := userEntity{}
-	if err := u.db.Where("email = ?", email).First(&user).Error; err != nil {
+	err := u.db.Where("email = ?", email).First(&user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return user.mapToDomain(), nil

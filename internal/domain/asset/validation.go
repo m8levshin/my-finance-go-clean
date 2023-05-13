@@ -1,14 +1,14 @@
 package asset
 
 import (
-	"errors"
 	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain"
 )
 
-const (
-	NotAllowedAssetType = "not allowed type of the asset"
-	DebitNotAllowed     = "debit is not allowed"
-	ReachedLimits       = "you've reached limits"
+var (
+	NotAllowedAssetTypeError = domain.NewError("not allowed type of the asset")
+	DebitNotAllowedError     = domain.NewError("debit is not allowed")
+	ReachedLimitsError       = domain.NewError("you've reached limits")
 )
 
 const ()
@@ -17,10 +17,10 @@ func validateBalanceAndLimitForTransaction(a *Asset, trx *Transaction) error {
 	resultBalance := a.Balance + trx.Volume
 
 	if resultBalance < 0 && !AllowDebit[a.Type] {
-		return errors.New(DebitNotAllowed)
+		return DebitNotAllowedError
 	} else if AllowDebit[a.Type] {
 		if resultBalance+a.Limit < 0 {
-			return errors.New(ReachedLimits)
+			return ReachedLimitsError
 		}
 	}
 	return nil
@@ -35,12 +35,14 @@ func validateAssetForCreateAndUpdate(a *Asset) error {
 		validation.Field(&a.UserId, validation.Required),
 		validation.Field(&a.Type, validation.NotNil),
 	)
+
 	if err != nil {
-		return err
+		return domain.ConvertValidationError(err)
 	}
 
 	if !AllowedTypes[a.Type] {
-		return errors.New(NotAllowedAssetType)
+		return NotAllowedAssetTypeError
 	}
+
 	return nil
 }
