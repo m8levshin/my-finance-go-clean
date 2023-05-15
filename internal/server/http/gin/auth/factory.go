@@ -21,11 +21,16 @@ type factory struct {
 func CreateOAuth2ResourceServerMiddlewareFactory(
 	c config.Configuration,
 	rw UserAuthInfoRW,
-) OAuth2MiddlewareFactory {
+) (OAuth2MiddlewareFactory, error) {
+
+	cache, err := initJWKSCache(c.Auth)
+	if err != nil {
+		return nil, err
+	}
 
 	return &factory{
 		config:         c.Auth,
-		cache:          *initJWKSCache(c.Auth),
+		cache:          *cache,
 		userAuthInfoRw: rw,
-	}
+	}, nil
 }

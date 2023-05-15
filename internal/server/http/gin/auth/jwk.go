@@ -8,20 +8,20 @@ import (
 	"time"
 )
 
-func initJWKSCache(config config.AuthConfig) *jwk.Cache {
+func initJWKSCache(config config.AuthConfig) (*jwk.Cache, error) {
 	ctx, _ := context.WithCancel(context.Background())
 
 	c := jwk.NewCache(ctx)
 	err := c.Register(config.JwksUrl, jwk.WithMinRefreshInterval(15*time.Minute))
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	_, err = c.Refresh(ctx, config.JwksUrl)
 	if err != nil {
 		log.Fatal("Failed to refresh JWKS: %s\n", err)
-		return nil
+		return nil, err
 	}
 
-	return c
+	return c, nil
 }
