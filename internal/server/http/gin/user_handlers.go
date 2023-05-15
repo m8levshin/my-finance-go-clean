@@ -8,10 +8,6 @@ import (
 )
 
 func (rH *RouterHandler) getAllUsers(c *gin.Context) {
-
-	userInfo := getUserInfoFromContext(c)
-	println(userInfo)
-
 	users, err := rH.ucHandler.GetAllUsers()
 	if err != nil {
 		c.Status(500)

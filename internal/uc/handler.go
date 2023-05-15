@@ -29,28 +29,18 @@ type handler struct {
 	transactionGroupService transaction_group.TransactionGroupDomainService
 }
 
-type HandlerBuilder struct {
-	Config                  config.Configuration
-	UserRw                  rw.UserRW
-	AssetRw                 rw.AssetRW
-	TransactionRw           rw.TransactionRW
-	TransactionGroupRw      rw.TransactionGroupRW
-	UserService             domainuser.UserDomainService
-	AssetService            domainasset.AssetDomainService
-	TransactionGroupService transaction_group.TransactionGroupDomainService
-}
-
-func (b HandlerBuilder) Build() Handler {
-	return &handler{
-		config:                  b.Config,
-		userRw:                  b.UserRw,
-		assetRw:                 b.AssetRw,
-		transactionRw:           b.TransactionRw,
-		transactionGroupRw:      b.TransactionGroupRw,
-		userService:             b.UserService,
-		assetService:            b.AssetService,
-		transactionGroupService: b.TransactionGroupService,
-	}
+func NewHandler(
+	config config.Configuration,
+	userRw rw.UserRW, assetRw rw.AssetRW,
+	transactionRw rw.TransactionRW,
+	transactionGroupRw rw.TransactionGroupRW,
+	userService domainuser.UserDomainService,
+	assetService domainasset.AssetDomainService,
+	transactionGroupService transaction_group.TransactionGroupDomainService,
+) Handler {
+	return &handler{config: config, userRw: userRw, assetRw: assetRw, transactionRw: transactionRw,
+		transactionGroupRw: transactionGroupRw, userService: userService, assetService: assetService,
+		transactionGroupService: transactionGroupService}
 }
 
 type UserLogic interface {

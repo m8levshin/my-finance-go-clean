@@ -12,9 +12,9 @@ const envVariableRegexPattern = `\$\{(.+?)(?:\|\|(.*?))?\}` // ${SERVER_PORT||80
 
 func InitAndReadConfig() Configuration {
 
-	viper.SetConfigName("application") // name of config file (without extension)
-	viper.SetConfigType("yaml")        // REQUIRED if the config file does not have the extension in the name
-	viper.AddConfigPath("./config/")   // optionally look for config in the working directory
+	viper.SetConfigName("application")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("./config/")
 
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Error reading config file, %s", err)

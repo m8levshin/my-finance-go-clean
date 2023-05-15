@@ -11,7 +11,7 @@ func init() {
 	InitLogger("info", "text")
 }
 
-func InitLogger(logLevel, logFormat string) domain.Logger {
+func InitLogger(logLevel, logFormat string) {
 	initLogger := logrus.New()
 	l, err := logrus.ParseLevel(logLevel)
 	if err != nil {
@@ -28,7 +28,11 @@ func InitLogger(logLevel, logFormat string) domain.Logger {
 		logrus.SetFormatter(&logrus.TextFormatter{})
 	}
 	loggerInstance = initLogger
-	return &logger{}
+}
+
+func NewDomainLogger() *domain.Logger {
+	var l domain.Logger = &logger{}
+	return &l
 }
 
 type logger struct {

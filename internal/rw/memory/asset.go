@@ -26,10 +26,10 @@ type memoryAsset struct {
 	Limit    float64
 }
 
-func NewMemoryAssetRW(userRW *rw.UserRW) rw.AssetRW {
+func NewMemoryAssetRW(userRW rw.UserRW) rw.AssetRW {
 	return assetRW{
 		store:  &sync.Map{},
-		userRw: userRW,
+		userRw: &userRW,
 	}
 }
 

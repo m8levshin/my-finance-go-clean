@@ -13,26 +13,28 @@ type RouterHandler struct {
 	mutualMiddlewares []gin.HandlerFunc
 }
 
-func NewRouter(ucHandler uc.Handler, config config.Configuration) *RouterHandler {
+func NewRouterHandler(ucHandler uc.Handler, config config.Configuration) *RouterHandler {
 	return &RouterHandler{
-		config:            config,
-		ucHandler:         ucHandler,
-		mutualMiddlewares: []gin.HandlerFunc{createErrorHandlerMiddleware()},
+		config:    config,
+		ucHandler: ucHandler,
+		mutualMiddlewares: []gin.HandlerFunc{
+			createErrorHandlerMiddleware(),
+		},
 	}
 }
 
 func (rH *RouterHandler) SetRoutes(r *gin.Engine, authMiddlewareFactory auth.OAuth2MiddlewareFactory) *gin.Engine {
 	api := r.Group("/api")
 	api.Use(rH.mutualMiddlewares...)
-	rH.usersRoutes(api, authMiddlewareFactory)
+	rH.usersRoutes(api)
 	rH.assetsRoutes(api)
 	return r
 }
 
-func (rH *RouterHandler) usersRoutes(api *gin.RouterGroup, oAuth2MiddlewareFactory auth.OAuth2MiddlewareFactory) {
+func (rH *RouterHandler) usersRoutes(api *gin.RouterGroup) {
 
 	usersApi := api.Group("/users")
-	usersApi.GET("", oAuth2MiddlewareFactory.GetMiddleware(), rH.getAllUsers)
+	usersApi.GET("", rH.getAllUsers)
 	usersApi.GET("/:uuid", rH.getUserById)
 	usersApi.POST("", rH.createUser)
 	usersApi.GET("/:uuid/assets", rH.getAssetsByUser)
