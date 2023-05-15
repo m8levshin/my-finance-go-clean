@@ -2,6 +2,5 @@ server:
   port: ${SERVER_PORT||8080}
 
 auth:
-  clientId:
-  jwksUrl:
-  audience:
+  jwksUrl: https://auth.mlevsh.in/realms/project-base/protocol/openid-connect/certs
+  audience: finance-backend

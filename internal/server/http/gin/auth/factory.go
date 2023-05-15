@@ -3,23 +3,29 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/lestrrat-go/jwx/v2/jwk"
-	"github.com/mlevshin/my-finance-go-clean/internal/uc/rw"
+	"github.com/mlevshin/my-finance-go-clean/config"
 )
+
+const ginContextUserInfoKey = "user_info"
 
 type OAuth2MiddlewareFactory interface {
 	GetMiddleware() func(c *gin.Context)
 }
 
 type factory struct {
-	cache      jwk.Cache
-	userInfoRw userInfoRW
+	config         config.AuthConfig
+	cache          jwk.Cache
+	userAuthInfoRw UserAuthInfoRW
 }
 
-const GinContextUserInfoKey = "user_info"
-const certsUrl = `https://auth.mlevsh.in/realms/project-base/protocol/openid-connect/certs`
+func CreateOAuth2ResourceServerMiddlewareFactory(
+	c config.Configuration,
+	rw UserAuthInfoRW,
+) OAuth2MiddlewareFactory {
 
-func CreateOAuth2ResourceServerMiddlewareFactory(rw rw.UserRW) OAuth2MiddlewareFactory {
 	return &factory{
-		cache: *initJWKSCache(), userInfoRw: newUserInfoRW(rw),
+		config:         c.Auth,
+		cache:          *initJWKSCache(c.Auth),
+		userAuthInfoRw: rw,
 	}
 }

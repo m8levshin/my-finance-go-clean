@@ -23,7 +23,7 @@ func (f *factory) GetMiddleware() func(c *gin.Context) {
 			return
 		}
 
-		keySet, err := f.cache.Get(context.Background(), certsUrl)
+		keySet, err := f.cache.Get(context.Background(), f.config.JwksUrl)
 		if err != nil {
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
@@ -47,7 +47,7 @@ func (f *factory) resolveUserAndFillContestByUserInfo(c *gin.Context, jwtToken *
 	}
 
 	email := emailClaim.(string)
-	user, err := f.userInfoRw.GetUserByEmail(email)
+	user, err := f.userAuthInfoRw.GetUserAuthInfoByEmail(email)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return false
@@ -58,6 +58,6 @@ func (f *factory) resolveUserAndFillContestByUserInfo(c *gin.Context, jwtToken *
 		c.AbortWithStatus(http.StatusNotImplemented)
 		return false
 	}
-	c.Set(GinContextUserInfoKey, user)
+	c.Set(ginContextUserInfoKey, user)
 	return true
 }

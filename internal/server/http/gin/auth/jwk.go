@@ -2,23 +2,24 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"github.com/lestrrat-go/jwx/v2/jwk"
+	"github.com/mlevshin/my-finance-go-clean/config"
+	"github.com/mlevshin/my-finance-go-clean/internal/log"
 	"time"
 )
 
-func initJWKSCache() *jwk.Cache {
+func initJWKSCache(config config.AuthConfig) *jwk.Cache {
 	ctx, _ := context.WithCancel(context.Background())
 
 	c := jwk.NewCache(ctx)
-	err := c.Register(certsUrl, jwk.WithMinRefreshInterval(15*time.Minute))
+	err := c.Register(config.JwksUrl, jwk.WithMinRefreshInterval(15*time.Minute))
 	if err != nil {
 		return nil
 	}
 
-	_, err = c.Refresh(ctx, certsUrl)
+	_, err = c.Refresh(ctx, config.JwksUrl)
 	if err != nil {
-		fmt.Printf("Failed to refresh JWKS: %s\n", err)
+		log.Fatal("Failed to refresh JWKS: %s\n", err)
 		return nil
 	}
 

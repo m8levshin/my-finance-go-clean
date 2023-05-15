@@ -37,6 +37,7 @@ func main() {
 	container.Provide(asset.NewAssetService)
 	container.Provide(user.CreateUserService)
 	container.Provide(transaction_group.NewTransactionGroupService)
+	container.Provide(auth.NewInMemoryCachedUserAuthInfoRW)
 	container.Provide(auth.CreateOAuth2ResourceServerMiddlewareFactory)
 	container.Provide(uc.NewHandler)
 	container.Provide(server.NewRouterHandler)

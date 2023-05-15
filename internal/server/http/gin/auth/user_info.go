@@ -11,21 +11,21 @@ type UserInfo struct {
 	Id uuid.UUID
 }
 
-type userInfoRW interface {
-	GetUserByEmail(email string) (*UserInfo, error)
+type UserAuthInfoRW interface {
+	GetUserAuthInfoByEmail(email string) (*UserInfo, error)
 }
 
-type inMemoryCachedUserInfoRW struct {
+type inMemoryCachedUserAuthInfoRW struct {
 	cache  *cache.Cache
 	userRW rw.UserRW
 }
 
-func newUserInfoRW(userRW rw.UserRW) userInfoRW {
+func NewInMemoryCachedUserAuthInfoRW(userRW rw.UserRW) UserAuthInfoRW {
 	c := cache.New(5*time.Minute, 10*time.Minute)
-	return &inMemoryCachedUserInfoRW{userRW: userRW, cache: c}
+	return &inMemoryCachedUserAuthInfoRW{userRW: userRW, cache: c}
 }
 
-func (u *inMemoryCachedUserInfoRW) GetUserByEmail(email string) (*UserInfo, error) {
+func (u *inMemoryCachedUserAuthInfoRW) GetUserAuthInfoByEmail(email string) (*UserInfo, error) {
 	var userInfo *UserInfo
 	cacheValue, exist := u.cache.Get(email)
 	if exist {
