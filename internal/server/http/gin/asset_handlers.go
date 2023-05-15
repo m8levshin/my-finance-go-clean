@@ -9,6 +9,7 @@ import (
 )
 
 func (rH *RouterHandler) getAssetsByUser(c *gin.Context) {
+
 	userUUIDParam := c.Param("uuid")
 	userUUID, err := uuid.Parse(userUUIDParam)
 

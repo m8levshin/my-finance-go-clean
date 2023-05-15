@@ -2,32 +2,37 @@ package gin
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/mlevshin/my-finance-go-clean/config"
+	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/auth"
 	"github.com/mlevshin/my-finance-go-clean/internal/uc"
 )
 
 type RouterHandler struct {
+	config            config.Configuration
 	ucHandler         uc.Handler
 	mutualMiddlewares []gin.HandlerFunc
 }
 
-func NewRouter(ucHandler uc.Handler) *RouterHandler {
+func NewRouter(ucHandler uc.Handler, config config.Configuration) *RouterHandler {
 	return &RouterHandler{
+		config:            config,
 		ucHandler:         ucHandler,
 		mutualMiddlewares: []gin.HandlerFunc{createErrorHandlerMiddleware()},
 	}
 }
 
-func (rH *RouterHandler) SetRoutes(r *gin.Engine) *gin.Engine {
+func (rH *RouterHandler) SetRoutes(r *gin.Engine, authMiddlewareFactory auth.OAuth2MiddlewareFactory) *gin.Engine {
 	api := r.Group("/api")
 	api.Use(rH.mutualMiddlewares...)
-	rH.usersRoutes(api)
+	rH.usersRoutes(api, authMiddlewareFactory)
 	rH.assetsRoutes(api)
 	return r
 }
 
-func (rH *RouterHandler) usersRoutes(api *gin.RouterGroup) {
+func (rH *RouterHandler) usersRoutes(api *gin.RouterGroup, oAuth2MiddlewareFactory auth.OAuth2MiddlewareFactory) {
+
 	usersApi := api.Group("/users")
-	usersApi.GET("", rH.getAllUsers)
+	usersApi.GET("", oAuth2MiddlewareFactory.GetMiddleware(), rH.getAllUsers)
 	usersApi.GET("/:uuid", rH.getUserById)
 	usersApi.POST("", rH.createUser)
 	usersApi.GET("/:uuid/assets", rH.getAssetsByUser)

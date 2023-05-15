@@ -2,6 +2,7 @@ package uc
 
 import (
 	"github.com/google/uuid"
+	"github.com/mlevshin/my-finance-go-clean/config"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
 	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain/transaction_group"
@@ -18,6 +19,7 @@ type Handler interface {
 }
 
 type handler struct {
+	config                  config.Configuration
 	userRw                  rw.UserRW
 	assetRw                 rw.AssetRW
 	transactionRw           rw.TransactionRW
@@ -28,6 +30,7 @@ type handler struct {
 }
 
 type HandlerBuilder struct {
+	Config                  config.Configuration
 	UserRw                  rw.UserRW
 	AssetRw                 rw.AssetRW
 	TransactionRw           rw.TransactionRW
@@ -39,6 +42,7 @@ type HandlerBuilder struct {
 
 func (b HandlerBuilder) Build() Handler {
 	return &handler{
+		config:                  b.Config,
 		userRw:                  b.UserRw,
 		assetRw:                 b.AssetRw,
 		transactionRw:           b.TransactionRw,
