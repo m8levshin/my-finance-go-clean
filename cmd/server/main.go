@@ -53,6 +53,7 @@ func initAndRunServer(
 	handler uc.Handler,
 	authMiddlewareFactory auth.OAuth2MiddlewareFactory,
 ) {
+
 	engine := gin.Default()
 	routerHandler := server.NewRouterHandler(handler, config)
 	routerHandler.SetRoutes(engine, authMiddlewareFactory)

@@ -4,6 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
 	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/currency"
 )
 
 func memoryAssetToDomain(asset *memoryAsset) *domainasset.Asset {
@@ -12,7 +13,7 @@ func memoryAssetToDomain(asset *memoryAsset) *domainasset.Asset {
 		Type:     domainasset.Type(asset.Type),
 		Name:     asset.Name,
 		UserId:   domain.Id(asset.UserId),
-		Currency: domainasset.Currency(asset.Currency),
+		Currency: currency.Currency(asset.Currency),
 		Balance:  asset.Balance,
 		Limit:    asset.Limit,
 	}

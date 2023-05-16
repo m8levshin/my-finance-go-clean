@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
 	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
+	currency2 "github.com/mlevshin/my-finance-go-clean/internal/domain/currency"
 	"github.com/mlevshin/my-finance-go-clean/internal/uc/utils"
 )
 
@@ -40,7 +41,7 @@ func (k *handler) CreateNewAsset(userUUID uuid.UUID, newAssetFields map[domain.U
 	newAsset, err := k.assetService.CreateAsset(
 		domainasset.SetName(*name),
 		domainasset.SetUserId(userId),
-		domainasset.SetCurrency(domainasset.Currency(*currency)),
+		domainasset.SetCurrency(currency2.Currency(*currency)),
 		domainasset.SetType(*assetType),
 		domainasset.SetLimit(*limit),
 	)

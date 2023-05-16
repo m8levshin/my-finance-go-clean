@@ -3,6 +3,7 @@ package asset
 import (
 	"errors"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/currency"
 )
 
 type Type uint8
@@ -34,7 +35,7 @@ type Asset struct {
 	Type     Type
 	Name     string
 	UserId   domain.Id
-	Currency Currency
+	Currency currency.Currency
 	Balance  float64
 	Limit    float64
 }

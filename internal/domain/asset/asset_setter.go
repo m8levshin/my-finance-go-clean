@@ -2,6 +2,7 @@ package asset
 
 import (
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/currency"
 )
 
 const (
@@ -40,7 +41,7 @@ func SetLimit(limit float64) func(a *Asset) error {
 	}
 }
 
-func SetCurrency(c Currency) func(a *Asset) error {
+func SetCurrency(c currency.Currency) func(a *Asset) error {
 	return func(a *Asset) error {
 		a.Currency = c
 		return nil
