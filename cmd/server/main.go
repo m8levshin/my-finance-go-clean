@@ -9,7 +9,7 @@ import (
 	"github.com/mlevshin/my-finance-go-clean/internal/domain/user"
 	"github.com/mlevshin/my-finance-go-clean/internal/log"
 	"github.com/mlevshin/my-finance-go-clean/internal/rw/gorm"
-	"github.com/mlevshin/my-finance-go-clean/internal/rw/memory"
+
 	server "github.com/mlevshin/my-finance-go-clean/internal/server/http/gin"
 	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/auth"
 	"github.com/mlevshin/my-finance-go-clean/internal/uc"
@@ -30,10 +30,10 @@ func main() {
 	container.Provide(config.InitAndReadConfig)
 	container.Provide(log.NewDomainLogger)
 	container.Provide(gorm.InitGorm)
+	container.Provide(gorm.NewTransactionRW)
+	container.Provide(gorm.NewTransactionGroupRW)
+	container.Provide(gorm.NewAssetRw)
 	container.Provide(gorm.NewUserRw)
-	container.Provide(memory.NewMemoryAssetRW)
-	container.Provide(memory.NewMemoryTransactionRW)
-	container.Provide(memory.NewMemoryTransactionGroupRW)
 	container.Provide(asset.NewAssetService)
 	container.Provide(user.CreateUserService)
 	container.Provide(transaction_group.NewTransactionGroupService)

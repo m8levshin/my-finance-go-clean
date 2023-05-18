@@ -7,6 +7,5 @@ import (
 
 type TransactionRW interface {
 	GetTransactionsByAsset(assetId domain.Id) ([]*domainasset.Transaction, error)
-	SaveTransactionsByAsset(assetId domain.Id, transactions []domainasset.Transaction) error
 	AddTransaction(assetId domain.Id, transaction domainasset.Transaction) error
 }

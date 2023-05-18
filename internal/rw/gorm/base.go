@@ -5,5 +5,5 @@ import (
 )
 
 type Base struct {
-	ID *uuid.UUID `gorm:"type:uuid;primary_key;"`
+	Id uuid.UUID `gorm:"type:uuid;primary_key;"`
 }
