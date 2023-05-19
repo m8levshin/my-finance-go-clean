@@ -4,3 +4,6 @@ server:
 auth:
   jwksUrl: https://auth.mlevsh.in/realms/project-base/protocol/openid-connect/certs
   audience: finance-backend
+
+db:
+  dsn: "host=localhost user=postgres password=postgres dbname=postgres port=5432 sslmode=disable"

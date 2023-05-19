@@ -1,14 +1,11 @@
 package gorm
 
 import (
-	"gorm.io/driver/sqlite"
+	"github.com/mlevshin/my-finance-go-clean/config"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func InitGorm() (*gorm.DB, error) {
-	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
-	return db, err
+func InitGorm(configuration config.Configuration) (*gorm.DB, error) {
+	return gorm.Open(postgres.Open(configuration.Db.Dsn), &gorm.Config{})
 }

@@ -34,20 +34,23 @@ func (rH *RouterHandler) SetRoutes(r *gin.Engine, authMiddlewareFactory auth.OAu
 func (rH *RouterHandler) usersRoutes(api *gin.RouterGroup) {
 
 	usersApi := api.Group("/users")
-	usersApi.GET("", rH.getAllUsers)
-	usersApi.GET("/:uuid", rH.getUserById)
-	usersApi.POST("", rH.createUser)
-	usersApi.GET("/:uuid/assets", rH.getAssetsByUser)
-	usersApi.GET("/:uuid/groups", rH.getGroupsByUser)
-	usersApi.POST("/:uuid/groups", rH.createGroup)
+	//usersApi.GET("/me", rH.getCurrentUser)            //доступно для любого пользователя
+	usersApi.GET("", rH.getAllUsers)                  //доступно для админа
+	usersApi.GET("/:uuid", rH.getUserById)            //доступно для админа
+	usersApi.POST("", rH.createUser)                  //доступно для админа
+	usersApi.GET("/:uuid/assets", rH.getAssetsByUser) //доступно для админа, либо для текущего пользователя
+	usersApi.GET("/:uuid/groups", rH.getGroupsByUser) //доступно для админа, либо для текущего пользователя
+	usersApi.POST("/:uuid/groups", rH.createGroup)    //доступно для админа, либо для текущего пользователя
+
 }
 
 func (rH *RouterHandler) assetsRoutes(api *gin.RouterGroup) {
 	assetsApi := api.Group("/assets")
-	assetsApi.GET("/:uuid", rH.getAssetById)
-	assetsApi.GET("/:uuid/transactions", rH.getTransactionsByAssetId)
-	assetsApi.POST("/:uuid/transactions", rH.addNewTransaction)
-	assetsApi.POST("", rH.postAsset)
+	assetsApi.GET("/:uuid", rH.getAssetById) //доступно для админа, либо для владельца
+	//assetsApi.GET("/:uuid/balance_tracking", rH.getBalanceTracking)   //доступно для админа, либо для владельца
+	assetsApi.GET("/:uuid/transactions", rH.getTransactionsByAssetId) //доступно для админа, либо для владельца
+	assetsApi.POST("/:uuid/transactions", rH.addNewTransaction)       //доступно для админа, либо для владельца
+	assetsApi.POST("", rH.postAsset)                                  //доступно для админа, либо для текущего пользователя
 }
 
 func createErrorHandlerMiddleware() gin.HandlerFunc {
