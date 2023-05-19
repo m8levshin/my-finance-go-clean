@@ -9,8 +9,10 @@ import (
 )
 
 type currency struct {
-	Name   string   `gorm:"column:name;primaryKey;"`
-	Assets []*asset `gorm:"foreignKey:CurrencyName;references:Name"`
+	Name                       string          `gorm:"column:name;primaryKey;"`
+	Assets                     []*asset        `gorm:"foreignKey:CurrencyName;references:Name"`
+	BaseCurrencyExchangeRate   []*exchangeRate `gorm:"foreignKey:BaseCurrencyName;references:Name"`
+	TargetCurrencyExchangeRate []*exchangeRate `gorm:"foreignKey:TargetCurrencyName;references:Name"`
 }
 
 type asset struct {

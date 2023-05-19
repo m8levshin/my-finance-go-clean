@@ -9,6 +9,7 @@ import (
 	"github.com/mlevshin/my-finance-go-clean/internal/domain/user"
 	"github.com/mlevshin/my-finance-go-clean/internal/log"
 	"github.com/mlevshin/my-finance-go-clean/internal/rw/gorm"
+	"github.com/mlevshin/my-finance-go-clean/internal/uc/rw"
 
 	server "github.com/mlevshin/my-finance-go-clean/internal/server/http/gin"
 	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/auth"
@@ -34,6 +35,7 @@ func main() {
 	container.Provide(gorm.NewTransactionGroupRW)
 	container.Provide(gorm.NewAssetRw)
 	container.Provide(gorm.NewUserRw)
+	container.Provide(gorm.NewExchangeRateRW)
 	container.Provide(asset.NewAssetService)
 	container.Provide(user.CreateUserService)
 	container.Provide(transaction_group.NewTransactionGroupService)
@@ -52,8 +54,10 @@ func initAndRunServer(
 	config config.Configuration,
 	handler uc.Handler,
 	authMiddlewareFactory auth.OAuth2MiddlewareFactory,
+	e rw.ExchangeRateRW,
 ) {
 
+	println(e)
 	engine := gin.Default()
 	routerHandler := server.NewRouterHandler(handler, config)
 	routerHandler.SetRoutes(engine, authMiddlewareFactory)
