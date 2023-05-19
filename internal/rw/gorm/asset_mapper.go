@@ -19,14 +19,6 @@ func mapAssetToDomain(e *asset) *domainasset.Asset {
 	}
 }
 
-func mapAssetsToDomains(e []*asset) []*domainasset.Asset {
-	result := make([]*domainasset.Asset, 0, len(e))
-	for _, entity := range e {
-		result = append(result, mapAssetToDomain(entity))
-	}
-	return result
-}
-
 func mapAssetToEntity(d *domainasset.Asset) *asset {
 	return &asset{
 		Base: Base{
@@ -41,12 +33,4 @@ func mapAssetToEntity(d *domainasset.Asset) *asset {
 		Limit:   d.Limit,
 		UserId:  uuid.UUID(d.UserId),
 	}
-}
-
-func mapAssetToEntities(d []*domainasset.Asset) []*asset {
-	result := make([]*asset, 0, len(d))
-	for _, domainItem := range d {
-		result = append(result, mapAssetToEntity(domainItem))
-	}
-	return result
 }

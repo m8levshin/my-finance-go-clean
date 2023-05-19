@@ -6,7 +6,7 @@ import (
 	domainuser "github.com/mlevshin/my-finance-go-clean/internal/domain/user"
 )
 
-func (e *user) mapUserToDomain() *domainuser.User {
+func mapUserToDomain(e *user) *domainuser.User {
 	return &domainuser.User{
 		Id:           domain.Id(e.Id),
 		Name:         e.Name,

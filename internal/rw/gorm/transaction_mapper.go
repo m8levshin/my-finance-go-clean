@@ -7,7 +7,7 @@ import (
 	"github.com/mlevshin/my-finance-go-clean/internal/domain/transaction_group"
 )
 
-func mapTransactionToModel(entity *transaction) *domainasset.Transaction {
+func mapTransactionToDomain(entity *transaction) *domainasset.Transaction {
 	return &domainasset.Transaction{
 		Id:                 domain.Id(entity.Id),
 		CreatedAt:          entity.CreatedAt,
@@ -15,14 +15,6 @@ func mapTransactionToModel(entity *transaction) *domainasset.Transaction {
 		Volume:             entity.Volume,
 		TransactionGroupId: domain.Id(entity.TransactionGroupId),
 	}
-}
-
-func mapTransactionsToModels(entities []*transaction) []*domainasset.Transaction {
-	result := make([]*domainasset.Transaction, 0, len(entities))
-	for _, entity := range entities {
-		result = append(result, mapTransactionToModel(entity))
-	}
-	return result
 }
 
 func mapTransactionToEntity(domain *domainasset.Transaction) *transaction {
@@ -37,14 +29,6 @@ func mapTransactionToEntity(domain *domainasset.Transaction) *transaction {
 	}
 }
 
-func mapTransactionsToEntities(domains []*domainasset.Transaction) []*transaction {
-	result := make([]*transaction, 0, len(domains))
-	for _, domainItem := range domains {
-		result = append(result, mapTransactionToEntity(domainItem))
-	}
-	return result
-}
-
 func mapTransactionGroupToEntity(trxGroup *transaction_group.TransactionGroup) *transactionGroup {
 	return &transactionGroup{
 		Base: Base{
@@ -56,14 +40,6 @@ func mapTransactionGroupToEntity(trxGroup *transaction_group.TransactionGroup) *
 	}
 }
 
-func mapTransactionGroupsToEntities(trxGroups []*transaction_group.TransactionGroup) []*transactionGroup {
-	result := make([]*transactionGroup, 0, len(trxGroups))
-	for _, trxGroup := range trxGroups {
-		result = append(result, mapTransactionGroupToEntity(trxGroup))
-	}
-	return result
-}
-
 func mapTransactionGroupToDomain(trxGroup *transactionGroup) *transaction_group.TransactionGroup {
 	return &transaction_group.TransactionGroup{
 		Id:       domain.Id(trxGroup.Id),
@@ -71,12 +47,4 @@ func mapTransactionGroupToDomain(trxGroup *transactionGroup) *transaction_group.
 		UserId:   domain.Id(trxGroup.UserId),
 		Name:     trxGroup.Name,
 	}
-}
-
-func mapTransactionGroupsToDomains(trxGroups []*transactionGroup) []*transaction_group.TransactionGroup {
-	result := make([]*transaction_group.TransactionGroup, 0, len(trxGroups))
-	for _, trxGroup := range trxGroups {
-		result = append(result, mapTransactionGroupToDomain(trxGroup))
-	}
-	return result
 }

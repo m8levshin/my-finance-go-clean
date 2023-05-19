@@ -66,7 +66,7 @@ func (t *transactionRW) GetTransactionGroupsByIds(groupIds []domain.Id) ([]*tran
 	if err != nil {
 		return nil, err
 	}
-	return mapTransactionGroupsToDomains(trxGroups), nil
+	return mapList(trxGroups, mapTransactionGroupToDomain), nil
 }
 
 func (t *transactionRW) GetTransactionGroupById(groupId domain.Id) (*transaction_group.TransactionGroup, error) {
@@ -94,7 +94,7 @@ func (t *transactionRW) GetTransactionGroupsByUserId(userId domain.Id) ([]*trans
 	if err != nil {
 		return nil, err
 	}
-	return mapTransactionGroupsToDomains(trxGroups), nil
+	return mapList(trxGroups, mapTransactionGroupToDomain), nil
 }
 
 func (t *transactionRW) GetTransactionsByAsset(assetId domain.Id) ([]*domainasset.Transaction, error) {
@@ -102,7 +102,7 @@ func (t *transactionRW) GetTransactionsByAsset(assetId domain.Id) ([]*domainasse
 	if tx := t.db.Preload("Transactions").Where("id = ?", uuid.UUID(assetId)).First(&a); tx.Error != nil {
 		return nil, tx.Error
 	}
-	return mapTransactionsToModels(a.Transactions), nil
+	return mapList(a.Transactions, mapTransactionToDomain), nil
 }
 
 func (t *transactionRW) AddTransaction(assetId domain.Id, trx domainasset.Transaction) error {

@@ -41,17 +41,17 @@ func (u *userRw) FindAll() ([]*domainuser.User, error) {
 
 	users := make([]*domainuser.User, 0, len(entities))
 	for _, entity := range entities {
-		users = append(users, entity.mapUserToDomain())
+		users = append(users, mapUserToDomain(&entity))
 	}
 	return users, nil
 }
 
 func (u *userRw) FindById(id domain.Id) (*domainuser.User, error) {
-	user := user{}
-	if err := u.db.Where("id = ?", uuid.UUID(id)).First(&user).Error; err != nil {
+	foundUser := user{}
+	if err := u.db.Where("id = ?", uuid.UUID(id)).First(&foundUser).Error; err != nil {
 		return nil, err
 	}
-	return user.mapUserToDomain(), nil
+	return mapUserToDomain(&foundUser), nil
 }
 
 func (u *userRw) Save(user domainuser.User) error {
@@ -64,13 +64,13 @@ func (u *userRw) Save(user domainuser.User) error {
 }
 
 func (u *userRw) FindByEmail(email string) (*domainuser.User, error) {
-	user := user{}
-	err := u.db.Where("email = ?", email).First(&user).Error
+	foundUser := user{}
+	err := u.db.Where("email = ?", email).First(&foundUser).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, err
 	}
-	return user.mapUserToDomain(), nil
+	return mapUserToDomain(&foundUser), nil
 }

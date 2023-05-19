@@ -52,7 +52,7 @@ func (a *assetRw) FindByUserId(userId domain.Id) ([]*domainasset.Asset, error) {
 	if err := tx.Error; err != nil {
 		return nil, err
 	}
-	return mapAssetsToDomains(assets), nil
+	return mapList(assets, mapAssetToDomain), nil
 }
 
 func (a *assetRw) FindById(assetId domain.Id) (*domainasset.Asset, error) {
