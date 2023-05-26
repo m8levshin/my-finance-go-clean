@@ -17,7 +17,6 @@ func (r *CreateUserRequest) MapToUpdatableFields() *map[domain.UpdatableProperty
 	createUserFields := map[domain.UpdatableProperty]any{}
 	createUserFields[domainuser.NameField] = &(r.Name)
 	createUserFields[domainuser.EmailField] = &(r.Email)
-	createUserFields[domainuser.PasswordField] = &(r.Password)
 
 	return &createUserFields
 }

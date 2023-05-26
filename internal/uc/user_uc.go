@@ -15,13 +15,16 @@ func (k *handler) GetUserById(uuid uuid.UUID) (user *domainuser.User, err error)
 	return (k.userRw).FindById(domain.Id(uuid))
 }
 
+func (k *handler) GetUserByEmail(email string) (user *domainuser.User, err error) {
+	return (k.userRw).FindByEmail(email)
+}
+
 func (k *handler) CreateNewUser(
 	newUserFields map[domain.UpdatableProperty]any,
 ) (user *domainuser.User, err error) {
 
 	var name = (newUserFields[domainuser.NameField]).(*string)
 	var email = (newUserFields[domainuser.EmailField]).(*string)
-	var password = (newUserFields[domainuser.PasswordField]).(*string)
 
 	user, err = k.userRw.FindByEmail(*email)
 	if err != nil {
@@ -34,7 +37,6 @@ func (k *handler) CreateNewUser(
 	createdUser, err := k.userService.CreateUser(
 		domainuser.SetName(name),
 		domainuser.SetEmail(email),
-		domainuser.SetPassword(password),
 	)
 	if err != nil {
 		return nil, err

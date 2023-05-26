@@ -5,7 +5,6 @@ import (
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
 	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain/transaction_group"
-	"github.com/mlevshin/my-finance-go-clean/internal/uc/rw"
 	"gorm.io/gorm"
 	"time"
 )
@@ -33,17 +32,7 @@ type transactionRW struct {
 	db *gorm.DB
 }
 
-func NewTransactionRW(db *gorm.DB) (rw.TransactionRW, error) {
-	err := db.AutoMigrate(&transaction{}, &transactionGroup{})
-	if err != nil {
-		return nil, err
-	}
-	return &transactionRW{
-		db: db,
-	}, nil
-}
-
-func NewTransactionGroupRW(db *gorm.DB) (rw.TransactionGroupRW, error) {
+func NewTransactionRW(db *gorm.DB) (*transactionRW, error) {
 	err := db.AutoMigrate(&transaction{}, &transactionGroup{})
 	if err != nil {
 		return nil, err

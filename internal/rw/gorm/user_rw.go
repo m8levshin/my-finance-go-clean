@@ -11,10 +11,9 @@ import (
 
 type user struct {
 	Base
-	Name         string `gorm:"column:name;size:128;not null;"`
-	Email        string `gorm:"column:email;size:128;not null;unique;"`
-	PasswordHash []byte `gorm:"column:password_hash;not null;"`
-	Assets       []*asset
+	Name   string `gorm:"column:name;size:128;not null;"`
+	Email  string `gorm:"column:email;size:128;not null;unique;"`
+	Assets []*asset
 }
 
 func (*user) TableName() string {

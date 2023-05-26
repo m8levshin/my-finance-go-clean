@@ -2,7 +2,9 @@ package auth
 
 import (
 	"github.com/google/uuid"
-	"github.com/mlevshin/my-finance-go-clean/internal/uc/rw"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/user"
+	"github.com/mlevshin/my-finance-go-clean/internal/uc"
 	"github.com/patrickmn/go-cache"
 	"time"
 )
@@ -11,18 +13,31 @@ type UserInfo struct {
 	Id uuid.UUID
 }
 
-type UserAuthInfoRW interface {
+type UserAuthInfoService interface {
 	GetUserAuthInfoByEmail(email string) (*UserInfo, error)
+	CreateNewUser(email string, name string) (*UserInfo, error)
 }
 
 type inMemoryCachedUserAuthInfoRW struct {
 	cache  *cache.Cache
-	userRW rw.UserRW
+	userUC uc.UserLogic
 }
 
-func NewInMemoryCachedUserAuthInfoRW(userRW rw.UserRW) UserAuthInfoRW {
+func (u *inMemoryCachedUserAuthInfoRW) CreateNewUser(email string, name string) (*UserInfo, error) {
+	newUser, err := u.userUC.CreateNewUser(map[domain.UpdatableProperty]any{
+		user.NameField:  &name,
+		user.EmailField: &email,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &UserInfo{Id: uuid.UUID(newUser.Id)}, nil
+}
+
+func NewInMemoryCachedUserAuthService(userLogic uc.UserLogic) UserAuthInfoService {
 	c := cache.New(5*time.Minute, 10*time.Minute)
-	return &inMemoryCachedUserAuthInfoRW{userRW: userRW, cache: c}
+	return &inMemoryCachedUserAuthInfoRW{userUC: userLogic, cache: c}
 }
 
 func (u *inMemoryCachedUserAuthInfoRW) GetUserAuthInfoByEmail(email string) (*UserInfo, error) {
@@ -33,7 +48,7 @@ func (u *inMemoryCachedUserAuthInfoRW) GetUserAuthInfoByEmail(email string) (*Us
 		return userInfo, nil
 	}
 
-	user, err := u.userRW.FindByEmail(email)
+	user, err := u.userUC.GetUserByEmail(email)
 	if err != nil {
 		return nil, err
 	}

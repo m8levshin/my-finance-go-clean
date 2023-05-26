@@ -37,7 +37,7 @@ func NewHandler(
 	userService domainuser.UserDomainService,
 	assetService domainasset.AssetDomainService,
 	transactionGroupService transaction_group.TransactionGroupDomainService,
-) Handler {
+) *handler {
 	return &handler{config: config, userRw: userRw, assetRw: assetRw, transactionRw: transactionRw,
 		transactionGroupRw: transactionGroupRw, userService: userService, assetService: assetService,
 		transactionGroupService: transactionGroupService}
@@ -46,6 +46,8 @@ func NewHandler(
 type UserLogic interface {
 	GetAllUsers() (users []*domainuser.User, err error)
 	GetUserById(uuid uuid.UUID) (user *domainuser.User, err error)
+
+	GetUserByEmail(email string) (user *domainuser.User, err error)
 	CreateNewUser(newUserFields map[domain.UpdatableProperty]any) (user *domainuser.User, err error)
 }
 

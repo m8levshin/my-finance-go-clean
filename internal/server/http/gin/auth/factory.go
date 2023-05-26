@@ -13,14 +13,14 @@ type OAuth2MiddlewareFactory interface {
 }
 
 type factory struct {
-	config         config.AuthConfig
-	cache          jwk.Cache
-	userAuthInfoRw UserAuthInfoRW
+	config              config.AuthConfig
+	cache               jwk.Cache
+	userAuthInfoService UserAuthInfoService
 }
 
 func CreateOAuth2ResourceServerMiddlewareFactory(
 	c config.Configuration,
-	rw UserAuthInfoRW,
+	userAuthInfoService UserAuthInfoService,
 ) (OAuth2MiddlewareFactory, error) {
 
 	cache, err := initJWKSCache(c.Auth)
@@ -29,8 +29,8 @@ func CreateOAuth2ResourceServerMiddlewareFactory(
 	}
 
 	return &factory{
-		config:         c.Auth,
-		cache:          *cache,
-		userAuthInfoRw: rw,
+		config:              c.Auth,
+		cache:               *cache,
+		userAuthInfoService: userAuthInfoService,
 	}, nil
 }

@@ -11,7 +11,6 @@ func validateForCreateAndUpdate(u *User) error {
 		validation.Field(&u.Id, validation.Required),
 		validation.Field(&u.Name, validation.Required, validation.Length(3, 0)),
 		validation.Field(&u.Email, validation.Required, is.Email),
-		validation.Field(&u.PasswordHash, validation.Required),
 	)
 	return domain.ConvertValidationError(err)
 }

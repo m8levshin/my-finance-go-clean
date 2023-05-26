@@ -5,8 +5,7 @@ import (
 )
 
 type User struct {
-	Id           domain.Id
-	Name         string
-	Email        string
-	PasswordHash []byte
+	Id    domain.Id
+	Name  string
+	Email string
 }

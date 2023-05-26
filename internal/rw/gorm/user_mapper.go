@@ -8,19 +8,17 @@ import (
 
 func mapUserToDomain(e *user) *domainuser.User {
 	return &domainuser.User{
-		Id:           domain.Id(e.Id),
-		Name:         e.Name,
-		Email:        e.Email,
-		PasswordHash: e.PasswordHash,
+		Id:    domain.Id(e.Id),
+		Name:  e.Name,
+		Email: e.Email,
 	}
 }
 
 func mapUserToEntity(u *domainuser.User) *user {
 	userUUID := uuid.UUID(u.Id)
 	return &user{
-		Base:         Base{Id: userUUID},
-		Name:         u.Name,
-		Email:        u.Email,
-		PasswordHash: u.PasswordHash,
+		Base:  Base{Id: userUUID},
+		Name:  u.Name,
+		Email: u.Email,
 	}
 }
