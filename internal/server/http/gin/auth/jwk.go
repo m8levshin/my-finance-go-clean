@@ -13,6 +13,7 @@ func initJWKSCache(config config.AuthConfig) (*jwk.Cache, error) {
 
 	c := jwk.NewCache(ctx)
 	err := c.Register(config.JwksUrl, jwk.WithMinRefreshInterval(15*time.Minute))
+
 	if err != nil {
 		return nil, err
 	}

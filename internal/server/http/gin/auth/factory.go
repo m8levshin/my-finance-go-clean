@@ -9,7 +9,7 @@ import (
 const ginContextUserInfoKey = "user_info"
 
 type OAuth2MiddlewareFactory interface {
-	GetMiddleware() func(c *gin.Context)
+	GetMiddleware(additionalValidations ...AdditionalValidation) func(c *gin.Context)
 }
 
 type factory struct {
