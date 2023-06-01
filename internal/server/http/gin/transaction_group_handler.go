@@ -15,6 +15,10 @@ func (rH *RouterHandler) getGroupsByUser(c *gin.Context) {
 		return
 	}
 
+	if !verifyUserOwnershipOrAdminAccess(c, userUUID) {
+		return
+	}
+
 	transactionGroups, err := rH.ucHandler.GetTransactionGroupsByUser(userUUID)
 	if err != nil {
 		c.Error(err)
@@ -33,6 +37,10 @@ func (rH *RouterHandler) createGroup(c *gin.Context) {
 	userUUID, err := uuid.Parse(userUUIDParam)
 	if err != nil {
 		c.Error(err)
+		return
+	}
+
+	if !verifyUserOwnershipOrAdminAccess(c, userUUID) {
 		return
 	}
 

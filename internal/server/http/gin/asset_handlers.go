@@ -18,6 +18,10 @@ func (rH *RouterHandler) getAssetsByUser(c *gin.Context) {
 		return
 	}
 
+	if !verifyUserOwnershipOrAdminAccess(c, userUUID) {
+		return
+	}
+
 	assets, err := rH.ucHandler.GetAssetsByUserId(userUUID)
 	if err != nil {
 		c.Error(err)
@@ -38,11 +42,16 @@ func (rH *RouterHandler) postAsset(c *gin.Context) {
 		return
 	}
 
+	if !verifyUserOwnershipOrAdminAccess(c, body.UserId) {
+		return
+	}
+
 	asset, err := rH.ucHandler.CreateNewAsset(body.UserId, body.MapToUpdatableFields())
 	if asset != nil && err == nil {
 		c.JSON(http.StatusCreated, dto.MapAssetDomainToDto(asset))
 		return
 	}
+
 	if err != nil {
 		c.Status(500)
 		c.Error(err)
@@ -61,6 +70,10 @@ func (rH *RouterHandler) getAssetById(c *gin.Context) {
 	if err != nil {
 		c.Status(500)
 		c.Error(err)
+		return
+	}
+
+	if !verifyUserOwnershipOrAdminAccess(c, uuid.UUID(asset.UserId)) {
 		return
 	}
 

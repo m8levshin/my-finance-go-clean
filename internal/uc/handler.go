@@ -59,7 +59,7 @@ type AssetLogic interface {
 }
 
 type TransactionLogic interface {
-	AddNewTransaction(assetUUID uuid.UUID, d *dto.AddNewTransactionRequest) (*domainasset.Transaction, error)
+	AddNewTransaction(assetUUID uuid.UUID, d *dto.AddNewTransactionRequest, userUUID uuid.UUID, isAdmin bool) (*domainasset.Transaction, error)
 }
 
 type TransactionGroupLogic interface {

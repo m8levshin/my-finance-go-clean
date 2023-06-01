@@ -10,7 +10,8 @@ import (
 )
 
 type UserInfo struct {
-	Id uuid.UUID
+	Id    uuid.UUID
+	Roles []string
 }
 
 type UserAuthInfoService interface {
@@ -48,16 +49,16 @@ func (u *inMemoryCachedUserAuthInfoRW) GetUserAuthInfoByEmail(email string) (*Us
 		return userInfo, nil
 	}
 
-	user, err := u.userUC.GetUserByEmail(email)
+	authUser, err := u.userUC.GetUserByEmail(email)
 	if err != nil {
 		return nil, err
 	}
 
-	if user == nil {
+	if authUser == nil {
 		return nil, nil
 	}
 
-	userInfo = &UserInfo{uuid.UUID(user.Id)}
+	userInfo = &UserInfo{Id: uuid.UUID(authUser.Id)}
 	u.cache.Set(email, userInfo, 0)
 	return userInfo, err
 }

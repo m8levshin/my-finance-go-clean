@@ -2,9 +2,12 @@ package gin
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/config"
 	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/auth"
 	"github.com/mlevshin/my-finance-go-clean/internal/uc"
+	"golang.org/x/exp/slices"
+	"net/http"
 )
 
 type RouterHandler struct {
@@ -32,20 +35,20 @@ func (rH *RouterHandler) SetRoutes(r *gin.Engine, authMiddlewareFactory auth.OAu
 	api.Use(rH.mutualMiddlewares...)
 
 	usersApi := api.Group("/users")
-	//usersApi.GET("/me", rH.ge22tCurrentUser)            //доступно для любого пользователя
-	usersApi.GET("", adminMiddleware, rH.getAllUsers)                 //доступно для админа
-	usersApi.GET("/:uuid", adminMiddleware, rH.getUserById)           //доступно для админа
-	usersApi.POST("", adminMiddleware, rH.createUser)                 //доступно для админа
-	usersApi.GET("/:uuid/assets", userMiddleware, rH.getAssetsByUser) //доступно для админа, либо для текущего пользователя
-	usersApi.GET("/:uuid/groups", rH.getGroupsByUser)                 //доступно для админа, либо для текущего пользователя
-	usersApi.POST("/:uuid/groups", rH.createGroup)                    //доступно для админа, либо для текущего пользователя
+	usersApi.GET("/me", userMiddleware, rH.getCurrentUser)
+	usersApi.GET("", adminMiddleware, rH.getAllUsers)
+	usersApi.GET("/:uuid", adminMiddleware, rH.getUserById)
+
+	usersApi.GET("/:uuid/assets", userMiddleware, rH.getAssetsByUser)
+	usersApi.GET("/:uuid/groups", userMiddleware, rH.getGroupsByUser)
+	usersApi.POST("/:uuid/groups", userMiddleware, rH.createGroup)
 
 	assetsApi := api.Group("/assets")
-	assetsApi.GET("/:uuid", rH.getAssetById) //доступно для админа, либо для владельца
-	//assetsApi.GET("/:uuid/balance_tracking", rH.getBalanceTracking)   //доступно для админа, либо для владельца
-	assetsApi.GET("/:uuid/transactions", rH.getTransactionsByAssetId) //доступно для админа, либо для владельца
-	assetsApi.POST("/:uuid/transactions", rH.addNewTransaction)       //доступно для админа, либо для владельца
-	assetsApi.POST("", rH.postAsset)
+	assetsApi.GET("/:uuid", userMiddleware, rH.getAssetById)
+	//assetsApi.GET("/:uuid/balance_tracking", rH.getBalanceTracking)
+	assetsApi.GET("/:uuid/transactions", userMiddleware, rH.getTransactionsByAssetId)
+	assetsApi.POST("/:uuid/transactions", userMiddleware, rH.addNewTransaction)
+	assetsApi.POST("", userMiddleware, rH.postAsset)
 
 	return r
 }
@@ -57,6 +60,18 @@ func createErrorHandlerMiddleware() gin.HandlerFunc {
 		if len(c.Errors) > 0 {
 			c.JSON(500, gin.H{"error": c.Errors.Last().Error()})
 		}
-
 	}
+}
+
+func isAdmin(info *auth.UserInfo) bool {
+	return slices.Contains(info.Roles, auth.AdminGroup)
+}
+
+func verifyUserOwnershipOrAdminAccess(c *gin.Context, userUUID uuid.UUID) bool {
+	authInfo := auth.GetUserInfoFromGinContext(c)
+	if userUUID != authInfo.Id && isAdmin(authInfo) {
+		c.AbortWithStatus(http.StatusForbidden)
+		return false
+	}
+	return true
 }

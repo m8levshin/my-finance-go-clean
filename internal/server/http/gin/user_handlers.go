@@ -3,9 +3,16 @@ package gin
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/auth"
 	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/dto"
 	"net/http"
 )
+
+func (rH *RouterHandler) getCurrentUser(c *gin.Context) {
+	authUser := auth.GetUserInfoFromGinContext(c)
+	c.AddParam("uuid", authUser.Id.String())
+	rH.getUserById(c)
+}
 
 func (rH *RouterHandler) getAllUsers(c *gin.Context) {
 	users, err := rH.ucHandler.GetAllUsers()
@@ -43,25 +50,4 @@ func (rH *RouterHandler) getUserById(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusNotFound)
-}
-
-func (rH *RouterHandler) createUser(c *gin.Context) {
-
-	body := dto.CreateUserRequest{}
-	if err := c.BindJSON(&body); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	user, err := rH.ucHandler.CreateNewUser(*body.MapToUpdatableFields())
-
-	if user != nil && err == nil {
-		c.JSON(http.StatusCreated, dto.MapUserDomainToDto(user))
-		return
-	}
-
-	if err != nil {
-		c.Status(500)
-		c.Error(err)
-	}
 }

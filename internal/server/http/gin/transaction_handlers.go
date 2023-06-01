@@ -3,6 +3,7 @@ package gin
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/auth"
 	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/dto"
 	"net/http"
 )
@@ -41,7 +42,8 @@ func (rH *RouterHandler) addNewTransaction(c *gin.Context) {
 		return
 	}
 
-	newTransaction, err := rH.ucHandler.AddNewTransaction(assetUUID, &addNewTransactionRequest)
+	authInfo := auth.GetUserInfoFromGinContext(c)
+	newTransaction, err := rH.ucHandler.AddNewTransaction(assetUUID, &addNewTransactionRequest, authInfo.Id, isAdmin(authInfo))
 	if err != nil {
 		c.Error(err)
 		return

@@ -18,17 +18,23 @@ var (
 	tokenValidationError = jwt.NewValidationError(fmt.Errorf("token is not valid"))
 )
 
-func (f *factory) GetMiddleware(additionalValidations ...AdditionalValidation) func(c *gin.Context) {
+const (
+	emailClaim     = "email"
+	nameClaim      = "email"
+	authHeaderName = "Authorization"
+	bearerPrefix   = "Bearer"
+)
 
+func (f *factory) GetMiddleware(additionalValidations ...AdditionalValidation) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
+		authHeader := c.GetHeader(authHeaderName)
 		if len(strings.TrimSpace(authHeader)) == 0 {
 			c.AbortWithError(http.StatusUnauthorized, tokenValidationError)
 			return
 		}
 
 		authHeaderParts := strings.Split(authHeader, " ")
-		if len(authHeaderParts) != 2 && authHeaderParts[0] != "Bearer" {
+		if len(authHeaderParts) != 2 && authHeaderParts[0] != bearerPrefix {
 			c.AbortWithError(http.StatusBadRequest, tokenValidationError)
 			return
 		}
@@ -46,6 +52,7 @@ func (f *factory) GetMiddleware(additionalValidations ...AdditionalValidation) f
 			c.AbortWithError(http.StatusForbidden, err)
 			return
 		}
+
 		ok := f.resolveUserAndFillContextByUserInfo(c, &jwtToken)
 		if !ok {
 			return
@@ -66,13 +73,13 @@ func generateValidationOptions(keySet jwk.Set, c config.AuthConfig, additionalVa
 }
 
 func (f *factory) resolveUserAndFillContextByUserInfo(c *gin.Context, jwtToken *jwt.Token) bool {
-	emailClaim, exist := (*jwtToken).Get("email")
+	emailCl, exist := (*jwtToken).Get(emailClaim)
 	if !exist {
 		c.AbortWithError(http.StatusForbidden, tokenValidationError)
 		return false
 	}
 
-	email := emailClaim.(string)
+	email := emailCl.(string)
 	user, err := f.userAuthInfoService.GetUserAuthInfoByEmail(email)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, errors.Join(err, tokenValidationError))
@@ -80,12 +87,12 @@ func (f *factory) resolveUserAndFillContextByUserInfo(c *gin.Context, jwtToken *
 	}
 
 	if user == nil {
-		nameClaim, exist := (*jwtToken).Get("name")
+		nameCl, exist := (*jwtToken).Get(nameClaim)
 		if !exist {
 			c.AbortWithError(http.StatusBadRequest, tokenValidationError)
 			return false
 		}
-		name := nameClaim.(string)
+		name := nameCl.(string)
 		newUser, err := f.userAuthInfoService.CreateNewUser(email, name)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -93,35 +100,14 @@ func (f *factory) resolveUserAndFillContextByUserInfo(c *gin.Context, jwtToken *
 		}
 		user = newUser
 	}
+
+	groups, err := getUserGroups(jwtToken)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, errors.Join(err, tokenValidationError))
+		return false
+	}
+	user.Roles = groups
+
 	c.Set(ginContextUserInfoKey, user)
 	return true
-}
-
-func WithUserGroupValidation(group string) AdditionalValidation {
-	return func(ctx context.Context, t jwt.Token) jwt.ValidationError {
-		groupsValue, exist := t.Get("groups")
-		if !exist {
-			return tokenValidationError
-
-		}
-
-		ok := containsGroup(groupsValue, group)
-		if !ok {
-			return tokenValidationError
-		}
-
-		return nil
-	}
-}
-
-func containsGroup(slice any, checkingRole string) bool {
-	groups := slice.([]interface{})
-	for _, v := range groups {
-		if str, ok := v.(string); ok {
-			if ok && str == checkingRole {
-				return true
-			}
-		}
-	}
-	return false
 }
