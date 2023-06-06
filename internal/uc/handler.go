@@ -9,6 +9,7 @@ import (
 	"github.com/mlevshin/my-finance-go-clean/internal/domain/finance/service"
 	domainuser "github.com/mlevshin/my-finance-go-clean/internal/domain/user"
 	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/dto"
+	"time"
 )
 
 type Handler interface {
@@ -58,6 +59,8 @@ type AssetLogic interface {
 	GetTransactionsByAssetId(assetId uuid.UUID) ([]*model.Transaction, error)
 	CreateNewAsset(userId uuid.UUID, newAssetFields map[domain.UpdatableProperty]any) (*model.Asset, error)
 	GetAssetById(assetId uuid.UUID) (*model.Asset, error)
+	GetBalanceStateHistory(userId, assetId uuid.UUID, from time.Time,
+		to time.Time, tz *time.Location, isAdmin bool) ([]*model.BalanceState, error)
 }
 
 type TransactionLogic interface {

@@ -65,9 +65,9 @@ func (s *AssetState) CheckTransaction() error {
 	return nil
 }
 
-func (s *AssetState) CalculateBalanceInRange(from time.Time, to time.Time, tz time.Location) ([]*BalanceState, error) {
+func (s *AssetState) CalculateBalanceInRange(from time.Time, to time.Time, tz *time.Location) ([]*BalanceState, error) {
 
-	resultBalanceState := make([]*BalanceState, 0, 10)
+	resultBalanceState := []*BalanceState{}
 	transactionsByDays := groupTransactionsByDays(s.Transactions, tz)
 
 	today := resetTime(time.Now(), tz)
@@ -101,7 +101,7 @@ func (s *AssetState) CalculateBalanceInRange(from time.Time, to time.Time, tz ti
 }
 
 func (s *AssetState) CalculateBalanceInRangeInTargetCurrency(from time.Time, to time.Time, targetCurrency Currency,
-	rates []*ExchangeRate, tz time.Location) ([]*BalanceState, error) {
+	rates []*ExchangeRate, tz *time.Location) ([]*BalanceState, error) {
 
 	balanceTrackingInAssetCurrency, err := s.CalculateBalanceInRange(from, to, tz)
 	if err != nil {
@@ -131,12 +131,12 @@ func isDateAfterOrEqual(date, reference time.Time) bool {
 	return date.After(reference) || date.Equal(reference)
 }
 
-func resetTime(timeValue time.Time, tz time.Location) time.Time {
-	t := timeValue.In(&tz)
-	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, &tz)
+func resetTime(timeValue time.Time, tz *time.Location) time.Time {
+	t := timeValue.In(tz)
+	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, tz)
 }
 
-func groupTransactionsByDays(transactions []*Transaction, tz time.Location) map[int64]*[]*Transaction {
+func groupTransactionsByDays(transactions []*Transaction, tz *time.Location) map[int64]*[]*Transaction {
 	resultMap := map[int64]*[]*Transaction{}
 	for _, transaction := range transactions {
 		transactionDate := resetTime(transaction.CreatedAt, tz)
@@ -150,7 +150,7 @@ func groupTransactionsByDays(transactions []*Transaction, tz time.Location) map[
 	return resultMap
 }
 
-func findNearestRate(t time.Time, r []*ExchangeRate, tz time.Location,
+func findNearestRate(t time.Time, r []*ExchangeRate, tz *time.Location,
 	baseCurrency Currency, targetCurrency Currency) *ExchangeRate {
 
 	targetDate := resetTime(t, tz)

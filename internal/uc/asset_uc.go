@@ -6,6 +6,7 @@ import (
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain/finance/model"
 	"github.com/mlevshin/my-finance-go-clean/internal/uc/utils"
+	"time"
 )
 
 func (k *handler) GetAssetsByUserId(userUUID uuid.UUID) ([]*model.Asset, error) {
@@ -62,4 +63,32 @@ func (k *handler) GetAssetById(assetId uuid.UUID) (*model.Asset, error) {
 		return nil, err
 	}
 	return asset, nil
+}
+
+func (k *handler) GetBalanceStateHistory(userId, assetId uuid.UUID, from time.Time,
+	to time.Time, tz *time.Location, isAdmin bool) ([]*model.BalanceState, error) {
+
+	asset, err := k.assetRw.FindById(domain.Id(assetId))
+	if err != nil {
+		return nil, err
+	}
+	if asset == nil {
+		return nil, errors.New("asset is not found")
+	}
+
+	if !isAdmin && uuid.UUID(asset.UserId) != userId {
+		return nil, errors.New("no permission")
+	}
+
+	transactions, err := k.transactionRw.GetTransactionsByAsset(asset.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	assetState, err := k.assetStateService.CreateNewAssetState(asset, transactions)
+	if err != nil {
+		return nil, err
+	}
+
+	return assetState.CalculateBalanceInRange(from, to, tz)
 }

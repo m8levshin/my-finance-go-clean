@@ -45,7 +45,7 @@ func (rH *RouterHandler) SetRoutes(r *gin.Engine, authMiddlewareFactory auth.OAu
 
 	assetsApi := api.Group("/assets")
 	assetsApi.GET("/:uuid", userMiddleware, rH.getAssetById)
-	//assetsApi.GET("/:uuid/balance_tracking", rH.getBalanceTracking)
+	assetsApi.GET("/:uuid/balance_tracking", userMiddleware, rH.getBalanceTracking)
 	assetsApi.GET("/:uuid/transactions", userMiddleware, rH.getTransactionsByAssetId)
 	assetsApi.POST("/:uuid/transactions", userMiddleware, rH.addNewTransaction)
 	assetsApi.POST("", userMiddleware, rH.postAsset)

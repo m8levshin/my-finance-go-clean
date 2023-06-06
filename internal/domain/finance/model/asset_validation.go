@@ -7,8 +7,10 @@ import (
 
 var (
 	NotAllowedAssetTypeError = domain.NewError("not allowed type of the asset")
-	DebitNotAllowedError     = domain.NewError("debit is not allowed")
-	ReachedLimitsError       = domain.NewError("you've reached limits")
+
+	NotAllowedLimitError = domain.NewError("not allowed limit for the asset type")
+	DebitNotAllowedError = domain.NewError("debit is not allowed")
+	ReachedLimitsError   = domain.NewError("you've reached limits")
 )
 
 const ()
@@ -42,6 +44,10 @@ func ValidateAssetForCreateAndUpdate(a *Asset) error {
 
 	if !AllowedTypes[a.Type] {
 		return NotAllowedAssetTypeError
+	}
+
+	if a.Limit != 0 && !AllowDebit[a.Type] {
+		return NotAllowedLimitError
 	}
 
 	return nil
