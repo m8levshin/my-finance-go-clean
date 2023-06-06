@@ -4,11 +4,11 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
-	"github.com/mlevshin/my-finance-go-clean/internal/domain/transaction_group"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/finance/model"
 	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/dto"
 )
 
-func (k *handler) GetTransactionGroupsByUser(userId uuid.UUID) ([]*transaction_group.TransactionGroup, error) {
+func (k *handler) GetTransactionGroupsByUser(userId uuid.UUID) ([]*model.TransactionGroup, error) {
 	user, err := k.userRw.FindById(domain.Id(userId))
 	if err != nil {
 		return nil, err
@@ -24,14 +24,14 @@ func (k *handler) GetTransactionGroupsByUser(userId uuid.UUID) ([]*transaction_g
 func (k *handler) CreateNewTransactionGroup(
 	userId uuid.UUID,
 	req dto.CreateTransactionGroupRequest,
-) (*transaction_group.TransactionGroup, error) {
+) (*model.TransactionGroup, error) {
 
 	user, err := k.userRw.FindById(domain.Id(userId))
 	if err != nil {
 		return nil, err
 	}
 
-	var parentTransactionGroup *transaction_group.TransactionGroup
+	var parentTransactionGroup *model.TransactionGroup
 	if req.ParentId != nil {
 		parentTransactionGroup, err = k.transactionGroupRw.GetTransactionGroupById(domain.Id(*req.ParentId))
 		if err != nil {

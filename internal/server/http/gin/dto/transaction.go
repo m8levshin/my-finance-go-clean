@@ -2,7 +2,7 @@ package dto
 
 import (
 	"github.com/google/uuid"
-	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
+	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/finance/model"
 	"time"
 )
 

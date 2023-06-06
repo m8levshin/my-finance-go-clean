@@ -4,11 +4,11 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
-	"github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/finance/model"
 	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/dto"
 )
 
-func (k *handler) GetTransactionsByAssetId(assetId uuid.UUID) ([]*asset.Transaction, error) {
+func (k *handler) GetTransactionsByAssetId(assetId uuid.UUID) ([]*model.Transaction, error) {
 	asset, err := k.assetRw.FindById(domain.Id(assetId))
 	if err != nil {
 		return nil, err
@@ -21,7 +21,7 @@ func (k *handler) GetTransactionsByAssetId(assetId uuid.UUID) ([]*asset.Transact
 }
 
 func (k *handler) AddNewTransaction(assetUUID uuid.UUID,
-	req *dto.AddNewTransactionRequest, userUUID uuid.UUID, isAdmin bool) (*asset.Transaction, error) {
+	req *dto.AddNewTransactionRequest, userUUID uuid.UUID, isAdmin bool) (*model.Transaction, error) {
 
 	asset, err := k.assetRw.FindById(domain.Id(assetUUID))
 	if err != nil {
@@ -48,7 +48,12 @@ func (k *handler) AddNewTransaction(assetUUID uuid.UUID,
 		return nil, errors.New("transaction group is not found")
 	}
 
-	newTransaction, err := k.assetService.AddTransaction(asset, transactions, req.Volume, transactionGroup)
+	assetState, err := k.assetStateService.CreateNewAssetState(asset, transactions)
+	if err != nil {
+		return nil, err
+	}
+
+	newTransaction, err := assetState.AddTransaction(req.Volume, transactionGroup)
 	if err != nil {
 		return nil, err
 	}

@@ -3,8 +3,7 @@ package gorm
 import (
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
-	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
-	domaincurrency "github.com/mlevshin/my-finance-go-clean/internal/domain/currency"
+	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/finance/model"
 )
 
 func mapAssetToDomain(e *asset) *domainasset.Asset {
@@ -13,7 +12,7 @@ func mapAssetToDomain(e *asset) *domainasset.Asset {
 		Type:     domainasset.Type(e.Type),
 		Name:     e.Name,
 		UserId:   domain.Id(e.UserId),
-		Currency: domaincurrency.Currency(e.CurrencyName),
+		Currency: domainasset.Currency(e.CurrencyName),
 		Balance:  e.Balance,
 		Limit:    e.Limit,
 	}

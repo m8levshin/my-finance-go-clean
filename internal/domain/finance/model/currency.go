@@ -1,4 +1,4 @@
-package currency
+package model
 
 import "time"
 

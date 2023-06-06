@@ -1,4 +1,4 @@
-package asset
+package model
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation"
@@ -13,7 +13,7 @@ var (
 
 const ()
 
-func validateBalanceAndLimitForTransaction(a *Asset, trx *Transaction) error {
+func ValidateBalanceAndLimitForTransaction(a *Asset, trx *Transaction) error {
 	resultBalance := a.Balance + trx.Volume
 
 	if resultBalance < 0 && !AllowDebit[a.Type] {
@@ -26,7 +26,7 @@ func validateBalanceAndLimitForTransaction(a *Asset, trx *Transaction) error {
 	return nil
 }
 
-func validateAssetForCreateAndUpdate(a *Asset) error {
+func ValidateAssetForCreateAndUpdate(a *Asset) error {
 
 	err := validation.ValidateStruct(
 		a,

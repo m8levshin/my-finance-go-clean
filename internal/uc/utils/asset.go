@@ -1,7 +1,7 @@
 package utils
 
 import (
-	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
+	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/finance/model"
 	"strings"
 )
 

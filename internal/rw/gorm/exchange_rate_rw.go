@@ -1,8 +1,8 @@
 package gorm
 
 import (
-	domaincurrency "github.com/mlevshin/my-finance-go-clean/internal/domain/currency"
-	"github.com/mlevshin/my-finance-go-clean/internal/uc/rw"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/finance/model"
+	currency2 "github.com/mlevshin/my-finance-go-clean/internal/domain/finance/rw"
 	"gorm.io/gorm"
 	"time"
 )
@@ -20,7 +20,7 @@ type exchangeRateRW struct {
 	db *gorm.DB
 }
 
-func NewExchangeRateRW(db *gorm.DB) (rw.ExchangeRateRW, error) {
+func NewExchangeRateRW(db *gorm.DB) (currency2.ExchangeRateRW, error) {
 	err := db.AutoMigrate(&exchangeRate{})
 	if err != nil {
 		return nil, err
@@ -30,8 +30,8 @@ func NewExchangeRateRW(db *gorm.DB) (rw.ExchangeRateRW, error) {
 	}, nil
 }
 
-func (e *exchangeRateRW) GetExchangeRate(base domaincurrency.Currency, secondary domaincurrency.Currency,
-	from time.Time, to time.Time) ([]*domaincurrency.ExchangeRate, error) {
+func (e *exchangeRateRW) GetExchangeRate(base model.Currency, secondary model.Currency,
+	from time.Time, to time.Time) ([]*model.ExchangeRate, error) {
 
 	var rates []*exchangeRate
 	err := e.db.Where(
@@ -44,7 +44,7 @@ func (e *exchangeRateRW) GetExchangeRate(base domaincurrency.Currency, secondary
 	return mapList(rates, mapExchangeRateToDomain), nil
 }
 
-func (e *exchangeRateRW) SaveExchangeRate(rate *domaincurrency.ExchangeRate) error {
+func (e *exchangeRateRW) SaveExchangeRate(rate *model.ExchangeRate) error {
 	entity := mapExchangeRateToEntity(rate)
 	err := e.db.Save(entity).Error
 	if err != nil {
@@ -53,7 +53,7 @@ func (e *exchangeRateRW) SaveExchangeRate(rate *domaincurrency.ExchangeRate) err
 	return nil
 }
 
-func (e *exchangeRateRW) SaveExchangeRates(rates []*domaincurrency.ExchangeRate) error {
+func (e *exchangeRateRW) SaveExchangeRates(rates []*model.ExchangeRate) error {
 	entities := mapList(rates, mapExchangeRateToEntity)
 	err := e.db.Save(&entities).Error
 	if err != nil {

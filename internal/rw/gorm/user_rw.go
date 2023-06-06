@@ -5,7 +5,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
 	domainuser "github.com/mlevshin/my-finance-go-clean/internal/domain/user"
-	"github.com/mlevshin/my-finance-go-clean/internal/uc/rw"
 	"gorm.io/gorm"
 )
 
@@ -24,7 +23,7 @@ type userRw struct {
 	db *gorm.DB
 }
 
-func NewUserRw(db *gorm.DB) (rw.UserRW, error) {
+func NewUserRw(db *gorm.DB) (domainuser.UserRW, error) {
 	err := db.AutoMigrate(&user{})
 	if err != nil {
 		return nil, err

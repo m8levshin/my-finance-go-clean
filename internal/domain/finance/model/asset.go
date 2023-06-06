@@ -1,9 +1,7 @@
-package asset
+package model
 
 import (
-	"errors"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
-	"github.com/mlevshin/my-finance-go-clean/internal/domain/currency"
 )
 
 type Type uint8
@@ -35,19 +33,22 @@ type Asset struct {
 	Type     Type
 	Name     string
 	UserId   domain.Id
-	Currency currency.Currency
+	Currency Currency
 	Balance  float64
 	Limit    float64
 }
 
-func (a *Asset) CheckTransaction(transactions []*Transaction) error {
-	var finalBalance float64
-	for _, t := range transactions {
-		finalBalance = finalBalance + t.Volume
+func (s *Asset) UpdateAsset(initial *Asset, opts ...*func(u *Asset) error) (*Asset, error) {
+	for _, function := range opts {
+		f := *function
+		err := f(initial)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	if a.Balance != finalBalance {
-		return errors.New("incorrect balance")
+	if err := ValidateAssetForCreateAndUpdate(initial); err != nil {
+		return nil, err
 	}
-	return nil
+	return initial, nil
 }

@@ -1,22 +1,18 @@
-package tracking
+package model
 
 import (
-	"github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
-	"github.com/mlevshin/my-finance-go-clean/internal/domain/currency"
 	"testing"
 	"time"
 )
 
 func TestCalculateBalanceInRange_periodInPast(t *testing.T) {
-	sut := NewBalanceTrackingDomainService()
 
-	testAsset := &asset.Asset{
+	testAsset := &Asset{
 		Balance:  1400,
 		Currency: "USD",
 	}
-
 	location := time.UTC
-	transactions := []*asset.Transaction{
+	transactions := []*Transaction{
 		{
 			CreatedAt: time.Now().UTC(),
 			Volume:    400,
@@ -30,11 +26,15 @@ func TestCalculateBalanceInRange_periodInPast(t *testing.T) {
 			Volume:    600,
 		},
 	}
+	assetState := AssetState{
+		Asset:        testAsset,
+		Transactions: transactions,
+	}
 
 	from := time.Date(2022, time.January, 1, 0, 0, 0, 0, location)
 	to := time.Date(2022, time.January, 4, 0, 0, 0, 0, location)
 
-	result, err := sut.CalculateBalanceInRange(testAsset, transactions, from, to, *location)
+	result, err := assetState.CalculateBalanceInRange(from, to, *location)
 
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
@@ -51,16 +51,15 @@ func TestCalculateBalanceInRange_periodInPast(t *testing.T) {
 }
 
 func TestCalculateBalanceInRangeInTargetCurrency_periodInPast(t *testing.T) {
-	sut := NewBalanceTrackingDomainService()
 
-	testAsset := &asset.Asset{
+	testAsset := &Asset{
 		Balance:  1400,
 		Currency: "USD",
 	}
 
 	location := time.UTC
-	var targetCurrency currency.Currency = "RUB"
-	transactions := []*asset.Transaction{
+	var targetCurrency Currency = "RUB"
+	transactions := []*Transaction{
 		{
 			CreatedAt: time.Now().UTC(),
 			Volume:    400,
@@ -74,8 +73,12 @@ func TestCalculateBalanceInRangeInTargetCurrency_periodInPast(t *testing.T) {
 			Volume:    600,
 		},
 	}
+	assetState := AssetState{
+		Asset:        testAsset,
+		Transactions: transactions,
+	}
 
-	exchangeRates := []*currency.ExchangeRate{
+	exchangeRates := []*ExchangeRate{
 		{
 			Value:          2,
 			BaseCurrency:   testAsset.Currency,
@@ -99,7 +102,7 @@ func TestCalculateBalanceInRangeInTargetCurrency_periodInPast(t *testing.T) {
 	from := time.Date(2022, time.January, 1, 0, 0, 0, 0, location)
 	to := time.Date(2022, time.January, 4, 0, 0, 0, 0, location)
 
-	result, err := sut.CalculateBalanceInRangeInTargetCurrency(testAsset, transactions, from, to, targetCurrency, exchangeRates, *location)
+	result, err := assetState.CalculateBalanceInRangeInTargetCurrency(from, to, targetCurrency, exchangeRates, *location)
 
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
@@ -115,23 +118,26 @@ func TestCalculateBalanceInRangeInTargetCurrency_periodInPast(t *testing.T) {
 }
 
 func TestCalculateBalanceInRangeInTargetCurrency_incorrectRates(t *testing.T) {
-	sut := NewBalanceTrackingDomainService()
 
-	testAsset := &asset.Asset{
+	testAsset := &Asset{
 		Balance:  1400,
 		Currency: "USD",
 	}
 
 	location := time.UTC
-	var targetCurrency currency.Currency = "RUB"
-	transactions := []*asset.Transaction{
+	var targetCurrency Currency = "RUB"
+	transactions := []*Transaction{
 		{
 			CreatedAt: time.Date(2022, time.January, 2, 0, 0, 0, 0, location),
 			Volume:    600,
 		},
 	}
+	assetState := AssetState{
+		Asset:        testAsset,
+		Transactions: transactions,
+	}
 
-	exchangeRates := []*currency.ExchangeRate{
+	exchangeRates := []*ExchangeRate{
 		{
 			Value:          2,
 			BaseCurrency:   testAsset.Currency,
@@ -143,7 +149,7 @@ func TestCalculateBalanceInRangeInTargetCurrency_incorrectRates(t *testing.T) {
 	from := time.Date(2022, time.January, 1, 0, 0, 0, 0, location)
 	to := time.Date(2022, time.January, 4, 0, 0, 0, 0, location)
 
-	_, err := sut.CalculateBalanceInRangeInTargetCurrency(testAsset, transactions, from, to, targetCurrency, exchangeRates, *location)
+	_, err := assetState.CalculateBalanceInRangeInTargetCurrency(from, to, targetCurrency, exchangeRates, *location)
 
 	if err == nil || err != ThereIsNotNecessaryExchangeRate {
 		t.Errorf("Didn't meet expected error: %s", ThereIsNotNecessaryExchangeRate.Error())

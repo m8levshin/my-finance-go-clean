@@ -1,7 +1,7 @@
 package gorm
 
 import (
-	domaincurrency "github.com/mlevshin/my-finance-go-clean/internal/domain/currency"
+	domaincurrency "github.com/mlevshin/my-finance-go-clean/internal/domain/finance/model"
 )
 
 func mapExchangeRateToDomain(rate *exchangeRate) *domaincurrency.ExchangeRate {

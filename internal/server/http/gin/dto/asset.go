@@ -3,7 +3,7 @@ package dto
 import (
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
-	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/finance/model"
 )
 
 type CreateAssetRequest struct {
@@ -16,11 +16,11 @@ type CreateAssetRequest struct {
 
 func (r *CreateAssetRequest) MapToUpdatableFields() map[domain.UpdatableProperty]any {
 	createUserFields := map[domain.UpdatableProperty]any{}
-	createUserFields[domainasset.NameField] = &(r.Name)
-	createUserFields[domainasset.TypeField] = &(r.Type)
-	createUserFields[domainasset.LimitField] = &(r.Limit)
-	createUserFields[domainasset.UserIdField] = &(r.UserId)
-	createUserFields[domainasset.CurrencyField] = &(r.Currency)
+	createUserFields[model.AssetNameField] = &(r.Name)
+	createUserFields[model.AssetTypeField] = &(r.Type)
+	createUserFields[model.AssetLimitField] = &(r.Limit)
+	createUserFields[model.AssetUserIdField] = &(r.UserId)
+	createUserFields[model.AssetCurrencyField] = &(r.Currency)
 
 	return createUserFields
 }
@@ -35,12 +35,12 @@ type AssetDto struct {
 	Balance  float64    `json:"balance"`
 }
 
-func MapAssetDomainToDto(r *domainasset.Asset) *AssetDto {
+func MapAssetDomainToDto(r *model.Asset) *AssetDto {
 	userId := uuid.UUID(r.UserId)
 	return &AssetDto{
 		Id:       uuid.UUID(r.Id),
 		Name:     r.Name,
-		Type:     domainasset.TypeNames[r.Type],
+		Type:     model.TypeNames[r.Type],
 		Limit:    r.Limit,
 		UserId:   &userId,
 		Currency: string(r.Currency),

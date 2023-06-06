@@ -3,8 +3,8 @@ package gorm
 import (
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
-	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
-	"github.com/mlevshin/my-finance-go-clean/internal/uc/rw"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/finance/model"
+	asset2 "github.com/mlevshin/my-finance-go-clean/internal/domain/finance/rw"
 	"gorm.io/gorm"
 )
 
@@ -40,7 +40,7 @@ type assetRw struct {
 	db *gorm.DB
 }
 
-func NewAssetRw(db *gorm.DB) (rw.AssetRW, error) {
+func NewAssetRw(db *gorm.DB) (asset2.AssetRW, error) {
 	err := db.AutoMigrate(&currency{}, &asset{})
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func NewAssetRw(db *gorm.DB) (rw.AssetRW, error) {
 	return &assetRw{db: db}, nil
 }
 
-func (a *assetRw) FindByUserId(userId domain.Id) ([]*domainasset.Asset, error) {
+func (a *assetRw) FindByUserId(userId domain.Id) ([]*model.Asset, error) {
 	var assets []*asset
 	tx := a.db.Where("userId = ?", uuid.UUID(userId)).Find(&assets)
 	if err := tx.Error; err != nil {
@@ -57,7 +57,7 @@ func (a *assetRw) FindByUserId(userId domain.Id) ([]*domainasset.Asset, error) {
 	return mapList(assets, mapAssetToDomain), nil
 }
 
-func (a *assetRw) FindById(assetId domain.Id) (*domainasset.Asset, error) {
+func (a *assetRw) FindById(assetId domain.Id) (*model.Asset, error) {
 	var foundAsset asset
 	tx := a.db.Where("id = ?", uuid.UUID(assetId)).First(&foundAsset)
 	if err := tx.Error; err != nil {
@@ -66,7 +66,7 @@ func (a *assetRw) FindById(assetId domain.Id) (*domainasset.Asset, error) {
 	return mapAssetToDomain(&foundAsset), nil
 }
 
-func (a *assetRw) Save(asset domainasset.Asset) error {
+func (a *assetRw) Save(asset model.Asset) error {
 	entity := mapAssetToEntity(&asset)
 	err := a.db.Preload("Currency").Save(entity).Error
 	if err != nil {

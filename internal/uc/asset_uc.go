@@ -4,12 +4,11 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
-	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
-	currency2 "github.com/mlevshin/my-finance-go-clean/internal/domain/currency"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/finance/model"
 	"github.com/mlevshin/my-finance-go-clean/internal/uc/utils"
 )
 
-func (k *handler) GetAssetsByUserId(userUUID uuid.UUID) ([]*domainasset.Asset, error) {
+func (k *handler) GetAssetsByUserId(userUUID uuid.UUID) ([]*model.Asset, error) {
 	assets, err := k.assetRw.FindByUserId(domain.Id(userUUID))
 	if err != nil {
 		return nil, err
@@ -17,7 +16,7 @@ func (k *handler) GetAssetsByUserId(userUUID uuid.UUID) ([]*domainasset.Asset, e
 	return assets, nil
 }
 
-func (k *handler) CreateNewAsset(userUUID uuid.UUID, newAssetFields map[domain.UpdatableProperty]any) (*domainasset.Asset, error) {
+func (k *handler) CreateNewAsset(userUUID uuid.UUID, newAssetFields map[domain.UpdatableProperty]any) (*model.Asset, error) {
 
 	userId := domain.Id(userUUID)
 	user, err := k.userRw.FindById(userId)
@@ -28,22 +27,22 @@ func (k *handler) CreateNewAsset(userUUID uuid.UUID, newAssetFields map[domain.U
 		return nil, errors.New("user is not found")
 	}
 
-	name := (newAssetFields[domainasset.NameField]).(*string)
-	currency := (newAssetFields[domainasset.CurrencyField]).(*string)
-	limit := (newAssetFields[domainasset.LimitField]).(*float64)
+	name := (newAssetFields[model.AssetNameField]).(*string)
+	currency := (newAssetFields[model.AssetCurrencyField]).(*string)
+	limit := (newAssetFields[model.AssetLimitField]).(*float64)
 
-	assetTypeName := (newAssetFields[domainasset.TypeField]).(*string)
+	assetTypeName := (newAssetFields[model.AssetTypeField]).(*string)
 	assetType := utils.ResolveAssetTypeByName(*assetTypeName)
 	if assetType == nil {
 		return nil, errors.New("can't recognize asset type")
 	}
 
 	newAsset, err := k.assetService.CreateAsset(
-		domainasset.SetName(*name),
-		domainasset.SetUserId(userId),
-		domainasset.SetCurrency(currency2.Currency(*currency)),
-		domainasset.SetType(*assetType),
-		domainasset.SetLimit(*limit),
+		model.SetAssetName(*name),
+		model.SetAssetUserId(userId),
+		model.SetAssetCurrency(model.Currency(*currency)),
+		model.SetAssetType(*assetType),
+		model.SetAssetLimit(*limit),
 	)
 	if err != nil {
 		return nil, err
@@ -57,7 +56,7 @@ func (k *handler) CreateNewAsset(userUUID uuid.UUID, newAssetFields map[domain.U
 	return newAsset, err
 }
 
-func (k *handler) GetAssetById(assetId uuid.UUID) (*domainasset.Asset, error) {
+func (k *handler) GetAssetById(assetId uuid.UUID) (*model.Asset, error) {
 	asset, err := k.assetRw.FindById(domain.Id(assetId))
 	if err != nil {
 		return nil, err

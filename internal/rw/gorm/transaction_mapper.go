@@ -3,8 +3,7 @@ package gorm
 import (
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
-	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
-	"github.com/mlevshin/my-finance-go-clean/internal/domain/transaction_group"
+	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/finance/model"
 )
 
 func mapTransactionToDomain(entity *transaction) *domainasset.Transaction {
@@ -29,7 +28,7 @@ func mapTransactionToEntity(domain *domainasset.Transaction) *transaction {
 	}
 }
 
-func mapTransactionGroupToEntity(trxGroup *transaction_group.TransactionGroup) *transactionGroup {
+func mapTransactionGroupToEntity(trxGroup *domainasset.TransactionGroup) *transactionGroup {
 	return &transactionGroup{
 		Base: Base{
 			Id: uuid.UUID(trxGroup.Id),
@@ -40,8 +39,8 @@ func mapTransactionGroupToEntity(trxGroup *transaction_group.TransactionGroup) *
 	}
 }
 
-func mapTransactionGroupToDomain(trxGroup *transactionGroup) *transaction_group.TransactionGroup {
-	return &transaction_group.TransactionGroup{
+func mapTransactionGroupToDomain(trxGroup *transactionGroup) *domainasset.TransactionGroup {
+	return &domainasset.TransactionGroup{
 		Id:       domain.Id(trxGroup.Id),
 		ParentId: (*domain.Id)(trxGroup.ParentId),
 		UserId:   domain.Id(trxGroup.UserId),

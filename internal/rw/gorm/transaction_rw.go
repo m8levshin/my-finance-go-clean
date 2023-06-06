@@ -3,8 +3,7 @@ package gorm
 import (
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
-	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
-	"github.com/mlevshin/my-finance-go-clean/internal/domain/transaction_group"
+	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/finance/model"
 	"gorm.io/gorm"
 	"time"
 )
@@ -42,7 +41,7 @@ func NewTransactionRW(db *gorm.DB) (*transactionRW, error) {
 	}, nil
 }
 
-func (t *transactionRW) GetTransactionGroupsByIds(groupIds []domain.Id) ([]*transaction_group.TransactionGroup, error) {
+func (t *transactionRW) GetTransactionGroupsByIds(groupIds []domain.Id) ([]*domainasset.TransactionGroup, error) {
 	var trxGroups []*transactionGroup
 
 	groupUUIDs := make([]*uuid.UUID, 0, len(groupIds))
@@ -58,7 +57,7 @@ func (t *transactionRW) GetTransactionGroupsByIds(groupIds []domain.Id) ([]*tran
 	return mapList(trxGroups, mapTransactionGroupToDomain), nil
 }
 
-func (t *transactionRW) GetTransactionGroupById(groupId domain.Id) (*transaction_group.TransactionGroup, error) {
+func (t *transactionRW) GetTransactionGroupById(groupId domain.Id) (*domainasset.TransactionGroup, error) {
 	var trxGroup *transactionGroup
 	err := t.db.Where("id = ?", uuid.UUID(groupId)).First(&trxGroup).Error
 	if err != nil {
@@ -67,7 +66,7 @@ func (t *transactionRW) GetTransactionGroupById(groupId domain.Id) (*transaction
 	return mapTransactionGroupToDomain(trxGroup), nil
 }
 
-func (t *transactionRW) Save(trxGroup *transaction_group.TransactionGroup) (*transaction_group.TransactionGroup, error) {
+func (t *transactionRW) Save(trxGroup *domainasset.TransactionGroup) (*domainasset.TransactionGroup, error) {
 	entity := mapTransactionGroupToEntity(trxGroup)
 
 	err := t.db.Save(entity).Error
@@ -77,7 +76,7 @@ func (t *transactionRW) Save(trxGroup *transaction_group.TransactionGroup) (*tra
 	return mapTransactionGroupToDomain(entity), nil
 }
 
-func (t *transactionRW) GetTransactionGroupsByUserId(userId domain.Id) ([]*transaction_group.TransactionGroup, error) {
+func (t *transactionRW) GetTransactionGroupsByUserId(userId domain.Id) ([]*domainasset.TransactionGroup, error) {
 	var trxGroups []*transactionGroup
 	err := t.db.Where("user_id = ?", uuid.UUID(userId)).Find(&trxGroups).Error
 	if err != nil {

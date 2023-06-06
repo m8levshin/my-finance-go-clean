@@ -4,11 +4,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/mlevshin/my-finance-go-clean/config"
 	"github.com/mlevshin/my-finance-go-clean/internal/domain"
-	domainasset "github.com/mlevshin/my-finance-go-clean/internal/domain/asset"
-	"github.com/mlevshin/my-finance-go-clean/internal/domain/transaction_group"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/finance/model"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/finance/rw"
+	"github.com/mlevshin/my-finance-go-clean/internal/domain/finance/service"
 	domainuser "github.com/mlevshin/my-finance-go-clean/internal/domain/user"
 	"github.com/mlevshin/my-finance-go-clean/internal/server/http/gin/dto"
-	"github.com/mlevshin/my-finance-go-clean/internal/uc/rw"
 )
 
 type Handler interface {
@@ -20,27 +20,29 @@ type Handler interface {
 
 type handler struct {
 	config                  config.Configuration
-	userRw                  rw.UserRW
+	userRw                  domainuser.UserRW
 	assetRw                 rw.AssetRW
 	transactionRw           rw.TransactionRW
 	transactionGroupRw      rw.TransactionGroupRW
 	userService             domainuser.UserDomainService
-	assetService            domainasset.AssetDomainService
-	transactionGroupService transaction_group.TransactionGroupDomainService
+	assetService            service.AssetDomainService
+	assetStateService       service.AssetStateDomainService
+	transactionGroupService service.TransactionGroupDomainService
 }
 
 func NewHandler(
 	config config.Configuration,
-	userRw rw.UserRW, assetRw rw.AssetRW,
+	userRw domainuser.UserRW, assetRw rw.AssetRW,
 	transactionRw rw.TransactionRW,
 	transactionGroupRw rw.TransactionGroupRW,
 	userService domainuser.UserDomainService,
-	assetService domainasset.AssetDomainService,
-	transactionGroupService transaction_group.TransactionGroupDomainService,
+	assetService service.AssetDomainService,
+	assetStateService service.AssetStateDomainService,
+	transactionGroupService service.TransactionGroupDomainService,
 ) *handler {
 	return &handler{config: config, userRw: userRw, assetRw: assetRw, transactionRw: transactionRw,
 		transactionGroupRw: transactionGroupRw, userService: userService, assetService: assetService,
-		transactionGroupService: transactionGroupService}
+		transactionGroupService: transactionGroupService, assetStateService: assetStateService}
 }
 
 type UserLogic interface {
@@ -52,17 +54,17 @@ type UserLogic interface {
 }
 
 type AssetLogic interface {
-	GetAssetsByUserId(userUUID uuid.UUID) ([]*domainasset.Asset, error)
-	GetTransactionsByAssetId(assetId uuid.UUID) ([]*domainasset.Transaction, error)
-	CreateNewAsset(userId uuid.UUID, newAssetFields map[domain.UpdatableProperty]any) (*domainasset.Asset, error)
-	GetAssetById(assetId uuid.UUID) (*domainasset.Asset, error)
+	GetAssetsByUserId(userUUID uuid.UUID) ([]*model.Asset, error)
+	GetTransactionsByAssetId(assetId uuid.UUID) ([]*model.Transaction, error)
+	CreateNewAsset(userId uuid.UUID, newAssetFields map[domain.UpdatableProperty]any) (*model.Asset, error)
+	GetAssetById(assetId uuid.UUID) (*model.Asset, error)
 }
 
 type TransactionLogic interface {
-	AddNewTransaction(assetUUID uuid.UUID, d *dto.AddNewTransactionRequest, userUUID uuid.UUID, isAdmin bool) (*domainasset.Transaction, error)
+	AddNewTransaction(assetUUID uuid.UUID, d *dto.AddNewTransactionRequest, userUUID uuid.UUID, isAdmin bool) (*model.Transaction, error)
 }
 
 type TransactionGroupLogic interface {
-	GetTransactionGroupsByUser(userId uuid.UUID) ([]*transaction_group.TransactionGroup, error)
-	CreateNewTransactionGroup(userId uuid.UUID, req dto.CreateTransactionGroupRequest) (*transaction_group.TransactionGroup, error)
+	GetTransactionGroupsByUser(userId uuid.UUID) ([]*model.TransactionGroup, error)
+	CreateNewTransactionGroup(userId uuid.UUID, req dto.CreateTransactionGroupRequest) (*model.TransactionGroup, error)
 }
